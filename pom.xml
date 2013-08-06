@@ -49,10 +49,10 @@
 	<build>
 		<sourceDirectory>src/</sourceDirectory>
 		<resources>
-			<resource>
-				<directory>resources</directory>
-				<filtering>true</filtering>
-			</resource>
+		   <resource>
+		        <directory>${project.basedir}</directory>
+         		<filtering>true</filtering>
+           </resource>
 		</resources>
 			<plugins>
 				<plugin>

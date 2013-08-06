@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Level;
 
 import me.kyle.burnett.SkyBlockWarriors.Configs.ConfigManager;
 import me.kyle.burnett.SkyBlockWarriors.Utils.WorldEditUtility;
@@ -30,14 +31,34 @@ public class GameManager {
 
         games.clear();
 
+        if (Main.getInstance().debug) {
+            Main.getInstance().log.log(Level.INFO, "Attempting to load arenas.");
+        }
+
         for (int x = 0; x <= getArenaAmount(); x++) {
 
             if (Main.getInstance().Arena.contains("Arena." + x)) {
 
+                if (Main.getInstance().debug) {
+                    Main.getInstance().log.log(Level.INFO, "Found arena " + x);
+                }
+
                 if (Main.getInstance().Arena.getBoolean("Arena." + x + ".Enabled")) {
 
                     games.add(new Game(x, false, true));
+
+                    if (Main.getInstance().debug) {
+                        Main.getInstance().log.log(Level.INFO, "Loading arena " + x);
+                    }
+
+                } else {
+
+                    if (Main.getInstance().debug) {
+                        Main.getInstance().log.log(Level.INFO, "Found arena " + x + "but it was disabled.");
+                    }
                 }
+
+
             }
         }
     }
@@ -125,16 +146,16 @@ public class GameManager {
 
     public boolean isPlayerSpectating(Player p) {
 
-    	if(spectators.containsKey(p.getName())) {
+        if (spectators.containsKey(p.getName())) {
 
-    		return true;
-    	}
-    	return false;
+            return true;
+        }
+        return false;
     }
 
     public void setPlayerSpectating(Player p, int g) {
 
-    	spectators.put(p.getName(), g);
+        spectators.put(p.getName(), g);
     }
 
     public Game getPlayerSpectating(Player p) {
@@ -144,7 +165,7 @@ public class GameManager {
 
     public void removePlayerSpectating(Player p) {
 
-    	spectators.remove(p.getName());
+        spectators.remove(p.getName());
     }
 
     public void setPlayerGame(Player p, Integer g) {

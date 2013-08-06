@@ -3,7 +3,6 @@ package me.kyle.burnett.SkyBlockWarriors;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -11,16 +10,23 @@ import me.kyle.burnett.SkyBlockWarriors.Commands.SW;
 import me.kyle.burnett.SkyBlockWarriors.Configs.ConfigManager;
 import me.kyle.burnett.SkyBlockWarriors.DatabaseHandler.SQLSelection;
 import me.kyle.burnett.SkyBlockWarriors.Listeners.BlockBreak;
+import me.kyle.burnett.SkyBlockWarriors.Listeners.BlockBurn;
+import me.kyle.burnett.SkyBlockWarriors.Listeners.BlockForm;
+import me.kyle.burnett.SkyBlockWarriors.Listeners.BlockGrow;
+import me.kyle.burnett.SkyBlockWarriors.Listeners.BlockPhysics;
 import me.kyle.burnett.SkyBlockWarriors.Listeners.BlockPlace;
+import me.kyle.burnett.SkyBlockWarriors.Listeners.BlockSpread;
 import me.kyle.burnett.SkyBlockWarriors.Listeners.Command;
 import me.kyle.burnett.SkyBlockWarriors.Listeners.Interact;
 import me.kyle.burnett.SkyBlockWarriors.Listeners.InventoryEvent;
+import me.kyle.burnett.SkyBlockWarriors.Listeners.LeavesDecay;
+import me.kyle.burnett.SkyBlockWarriors.Listeners.PistonExtend;
+import me.kyle.burnett.SkyBlockWarriors.Listeners.PistonRetract;
 import me.kyle.burnett.SkyBlockWarriors.Listeners.PlayerDamageEvent;
 import me.kyle.burnett.SkyBlockWarriors.Listeners.PlayerDeath;
 import me.kyle.burnett.SkyBlockWarriors.Listeners.PlayerLeave;
 import me.kyle.burnett.SkyBlockWarriors.Listeners.PlayerMove;
 import me.kyle.burnett.SkyBlockWarriors.Listeners.SignChange;
-import me.kyle.burnett.SkyBlockWarriors.Utils.WorldEditUtility;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -104,6 +110,14 @@ public class Main extends JavaPlugin {
         pm.registerEvents(new BlockPlace(), this);
         pm.registerEvents(new InventoryEvent(), this);
         pm.registerEvents(new Command(), this);
+        pm.registerEvents(new BlockBurn(), this);
+        pm.registerEvents(new BlockForm(), this);
+        pm.registerEvents(new BlockGrow(), this);
+        pm.registerEvents(new BlockPhysics(), this);
+        pm.registerEvents(new BlockSpread(), this);
+        pm.registerEvents(new LeavesDecay(), this);
+        pm.registerEvents(new PistonExtend(), this);
+        pm.registerEvents(new PistonRetract(), this);
 
         getCommand("skyblockw").setExecutor(new SW());
 
@@ -131,15 +145,14 @@ public class Main extends JavaPlugin {
     @Override
     public void onDisable() {
 
-        Iterator<String> it = GameManager.getInstance().getPlayers().keySet().iterator();
+        for (Game g : GameManager.getInstance().getGames()){
+            g.endGameShutdown();
+        }
 
-        while (it.hasNext()) {
-
-            Player p = Bukkit.getServer().getPlayer(it.next());
-
-            if (p != null) {
-                this.teleportToLobby(p);
-            }
+        try {
+            SQLSelection.getConnection().close();
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
         }
     }
 
@@ -151,7 +164,6 @@ public class Main extends JavaPlugin {
             public void run() {
 
                 GameManager.getInstance().setUp();
-                WorldEditUtility.getInstance().regenAllIslands();
             }
         }.run();
     }

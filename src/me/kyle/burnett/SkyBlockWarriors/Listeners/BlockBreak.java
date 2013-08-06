@@ -25,16 +25,15 @@ public class BlockBreak implements Listener {
                     e.setCancelled(true);
                 }
             }
-
         }
 
-        if(e.getBlock().getState() instanceof Sign){
+        if (e.getBlock().getState() instanceof Sign) {
 
             Sign s = (Sign) e.getBlock().getState();
 
             String[] split = s.getLine(1).split(" ");
 
-            if(split[0].equals("SBW") && GameManager.getInstance().checkGameByConfig(Integer.parseInt(split[1]))){
+            if (split[0].equals("SBW") && GameManager.getInstance().checkGameByConfig(Integer.parseInt(split[1]))) {
 
                 int arena = Integer.parseInt(split[1]);
 
@@ -42,7 +41,7 @@ public class BlockBreak implements Listener {
 
                 String loc = Integer.toString(e.getBlock().getX()) + "," + Integer.toString(e.getBlock().getY()) + "," + Integer.toString(e.getBlock().getZ());
 
-                if(signLocations.contains(loc)){
+                if (signLocations.contains(loc)) {
 
                     signLocations.remove(loc);
 

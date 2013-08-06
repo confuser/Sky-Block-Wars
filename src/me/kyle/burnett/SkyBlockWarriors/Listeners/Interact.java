@@ -45,11 +45,11 @@ public class Interact implements Listener {
                 Bukkit.getServer().dispatchCommand(e.getPlayer(), "sw leave");
             } else if (s.getLine(0).contains("§l§9[Spectate]")) {
 
-            	e.setCancelled(true);
+                e.setCancelled(true);
 
-            	String[] split = s.getLine(1).split(" ");
+                String[] split = s.getLine(1).split(" ");
 
-            	Bukkit.getServer().dispatchCommand(e.getPlayer(), "sw spectate " + split[1]);
+                Bukkit.getServer().dispatchCommand(e.getPlayer(), "sw spectate " + split[1]);
 
             }
 

@@ -12,21 +12,20 @@ public class Command implements Listener {
 
 
     @EventHandler
+    public void onCommand(PlayerCommandPreprocessEvent e) {
 
-    public void onCommand(PlayerCommandPreprocessEvent e){
+        if (GameManager.getInstance().isPlayerInGame(e.getPlayer())) {
 
-        if(GameManager.getInstance().isPlayerInGame(e.getPlayer())){
-
-            if(Main.getInstance().Config.getBoolean("Block-Commands")){
+            if (Main.getInstance().Config.getBoolean("Block-Commands")) {
 
 
-                if(e.getMessage().startsWith("/sw")){
+                if (e.getMessage().startsWith("/sw")) {
                     return;
                 }
 
-                else if(!e.getMessage().startsWith("/sw")){
+                else if (!e.getMessage().startsWith("/sw")) {
 
-                    if(!e.getPlayer().hasPermission("skyblockwars.usecommands")){
+                    if (!e.getPlayer().hasPermission("skyblockwars.usecommands")) {
 
                         e.setCancelled(true);
                         e.getPlayer().sendMessage("[" + ChatColor.BLUE + "SBW" + ChatColor.GOLD + "]" + ChatColor.RED + "You are not allowed to use commands in game.");
@@ -37,7 +36,6 @@ public class Command implements Listener {
         }
 
     }
-
 
 
 }

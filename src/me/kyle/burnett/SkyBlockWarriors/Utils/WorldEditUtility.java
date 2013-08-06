@@ -78,6 +78,8 @@ public class WorldEditUtility {
             return false;
         }
 
+
+
         CuboidClipboard cc = null;
         try {
             cc = format.load(file);
@@ -86,12 +88,13 @@ public class WorldEditUtility {
 
         }
 
+
         EditSession es = new EditSession(new BukkitWorld(world), cc.getHeight() * cc.getWidth() * cc.getLength() * 4);
 
         Vector v = new Vector(Main.getInstance().Arena.getDouble("Arena." + arena + ".OriginX"), Main.getInstance().Arena.getDouble("Arena." + arena + ".OriginY"), Main.getInstance().Arena.getDouble("Arena." + arena + ".OriginZ"));
 
         try {
-            cc.paste(es, v, false, false);
+            cc.paste(es, v, false);
         } catch (MaxChangedBlocksException e) {
             e.printStackTrace();
         }
@@ -140,7 +143,7 @@ public class WorldEditUtility {
                 Vector v = new Vector(Main.getInstance().Arena.getDouble("Arena." + x + ".OriginX"), Main.getInstance().Arena.getDouble("Arena." + x + ".OriginY"), Main.getInstance().Arena.getDouble("Arena." + x + ".OriginZ"));
 
                 try {
-                    cc.paste(es, v, false, false);
+                    cc.paste(es, v, false);
                 } catch (MaxChangedBlocksException e) {
                     e.printStackTrace();
                 }
@@ -396,5 +399,4 @@ public class WorldEditUtility {
         return false;
 
     }
-
 }
