@@ -9,6 +9,7 @@ import java.util.logging.Logger;
 import me.kyle.burnett.SkyBlockWarriors.Commands.SW;
 import me.kyle.burnett.SkyBlockWarriors.Configs.ConfigManager;
 import me.kyle.burnett.SkyBlockWarriors.DatabaseHandler.SQLSelection;
+import me.kyle.burnett.SkyBlockWarriors.DatabaseHandler.Queries.Regen.BlockLocation;
 import me.kyle.burnett.SkyBlockWarriors.Listeners.BlockBreak;
 import me.kyle.burnett.SkyBlockWarriors.Listeners.BlockBurn;
 import me.kyle.burnett.SkyBlockWarriors.Listeners.BlockForm;
@@ -31,6 +32,7 @@ import me.kyle.burnett.SkyBlockWarriors.Listeners.SignChange;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -257,6 +259,10 @@ public class Main extends JavaPlugin {
         con.createStatement().execute("CREATE TABLE IF NOT EXISTS sbw(username VARCHAR(255), kills INTEGER, deaths INTEGER, wins INTEGER, losses INTEGER, played INTEGER)");
 
 
+    }
+
+    public BlockLocation blockToBlockLocation(Block b){
+        return new BlockLocation(b.getWorld().getName(), b.getX(), b.getY(), b.getZ(), b.getTypeId(), b.getData());
     }
 
 }

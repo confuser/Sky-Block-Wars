@@ -48,6 +48,7 @@ public class SignChange implements Listener {
                             e.setLine(3, "");
                             e.getPlayer().sendMessage(ChatColor.GOLD + "[" + ChatColor.BLUE + "SBW" + ChatColor.GOLD + "] " + ChatColor.GREEN + "Sign for arena " + ChatColor.GOLD + arena + ChatColor.GREEN + " has been made.");
                             g.updateSignState();
+                            g.updateSignPlayers();
 
                         }
 

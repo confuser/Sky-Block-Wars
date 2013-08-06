@@ -1904,6 +1904,26 @@ public class Game {
         }
     }
 
+    public void loadChunk(){
+        List<String> signs = Main.getInstance().Signs.getStringList("Signs." + this.gameID);
+
+        for (int x = 0; x < signs.size(); x++) {
+
+            Vector v = this.vecFromString(signs.get(x));
+
+            Block b = null;
+
+            if(this.world.getBlockAt(v.getBlockX(), v.getBlockY(), v.getBlockZ()).equals(Material.SIGN) || this.world.getBlockAt(v.getBlockX(), v.getBlockY(), v.getBlockZ()).equals(Material.SIGN_POST)){
+                b = this.world.getBlockAt(v.getBlockX(), v.getBlockY(), v.getBlockZ());
+            }
+
+            this.world.getChunkAt(b).load();
+            this.updateSignState();
+            this.updateSignPlayers();
+        }
+
+    }
+
     public void updateSignState() {
 
         List<String> signs = Main.getInstance().Signs.getStringList("Signs." + this.gameID);

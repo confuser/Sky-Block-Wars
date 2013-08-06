@@ -486,7 +486,19 @@ public class SW implements CommandExecutor {
 
                 if (args.length == 2) {
 
-                    if (args[0].equalsIgnoreCase("setspawn")) {
+                    if(args[0].equalsIgnoreCase("loadchunk")){
+
+                        if(gm.checkGameByID(Integer.parseInt(args[1]))){
+
+                            gm.getGameByID(Integer.parseInt(args[1])).loadChunk();
+
+                            p.sendMessage(prefix + ChatColor.GREEN + "Loaded for " + args[1] +".");
+
+                        }
+                        return true;
+                    }
+
+                    else if (args[0].equalsIgnoreCase("setspawn")) {
 
                         if (p.hasPermission("skyblockwars.setspawn")) {
 
