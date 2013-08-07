@@ -3,6 +3,7 @@ package me.kyle.burnett.SkyBlockWarriors.DatabaseHandler.Queries.Regen;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import me.kyle.burnett.SkyBlockWarriors.DatabaseHandler.SQLSelection;
@@ -45,10 +46,9 @@ public class RegenArena {
         con.createStatement().execute("DELETE FROM regen WHERE arena = " + arena + ";");
     }
 
-    @SuppressWarnings("null")
     public static List<BlockLocation> getBlocksPlaced(int arena) throws SQLException, ClassNotFoundException {
 
-        List<BlockLocation> blocks = null;
+        List<BlockLocation> blocks = new ArrayList<BlockLocation>();
 
         ResultSet rs = null;
 
@@ -64,10 +64,9 @@ public class RegenArena {
         return blocks;
     }
 
-    @SuppressWarnings("null")
     public static List<BlockLocation> getBlocksBroken(int arena) throws SQLException, ClassNotFoundException {
 
-        List<BlockLocation> blocks = null;
+        List<BlockLocation> blocks = new ArrayList<BlockLocation>();
 
         ResultSet rs = null;
 
