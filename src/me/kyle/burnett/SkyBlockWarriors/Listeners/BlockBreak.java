@@ -45,13 +45,8 @@ public class BlockBreak implements Listener {
 
                     if(!RegenArena.getBlocksPlaced(gm.getPlayerGame(e.getPlayer()).getGameID()).contains(bl)){
 
-                        RegenArena.addBlockBroken(b.getWorld().getName(), b.getX(), b.getY(), b.getZ(), new byte[b.getData()], gm.getPlayerGame(e.getPlayer()).getGameID());
+                        RegenArena.addBlockBroken(b.getWorld().getName(), b.getX(), b.getY(), b.getZ(), b.getTypeId(), b.getData(), gm.getPlayerGame(e.getPlayer()).getGameID());
 
-                    }
-
-                    else if(RegenArena.getBlocksPlaced(gm.getPlayerGame(e.getPlayer()).getGameID()).contains(bl)){
-
-                        //remove from placed.
                     }
 
                 } catch (SQLException | ClassNotFoundException e1) {
