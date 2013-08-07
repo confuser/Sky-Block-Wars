@@ -16,8 +16,6 @@ import me.kyle.burnett.SkyBlockWarriors.DatabaseHandler.Queries.Regen.BlockLocat
 import me.kyle.burnett.SkyBlockWarriors.DatabaseHandler.Queries.Regen.RegenArena;
 import me.kyle.burnett.SkyBlockWarriors.Events.PlayerJoinArenaEvent;
 import me.kyle.burnett.SkyBlockWarriors.Events.PlayerLeaveArenaEvent;
-import me.kyle.burnett.SkyBlockWarriors.Utils.WorldEditUtility;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
@@ -362,7 +360,7 @@ public class Game {
 
     public void checkEnd() {
 
-/*        int red, green, yellow, blue;
+        int red, green, yellow, blue;
         red = this.RED.getPlayers().size();
         green = this.GREEN.getPlayers().size();
         yellow = this.YELLOW.getPlayers().size();
@@ -390,7 +388,7 @@ public class Game {
         else if (green <= 0 && yellow <= 0 && blue <= 0 && yellow <= 0) {
 
             this.endGameNormal(null);
-        }*/
+        }
 
     }
 
