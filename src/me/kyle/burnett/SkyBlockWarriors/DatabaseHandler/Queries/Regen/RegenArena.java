@@ -25,7 +25,7 @@ public class RegenArena {
 
         con = SQLSelection.getConnection();
 
-        con.createStatement().execute("INSERT INTO regen(world, x, y, z, type, data, arena, placed) VALUES('" + world + "', " + x + "," + y + ", " + z + ", " + type + ", " + data + ", " + arena + ", " + true + ");");
+        con.createStatement().execute("INSERT INTO regen(world, x, y, z, type, data, arena, placed) VALUES('" + world + "', " + x + "," + y + ", " + z + ", " + type + ", " + data + ", " + arena + ", '" + true + "');");
     }
 
     public static void addBlockBroken(String world, int x, int y, int z, int type, byte data, int arena) throws SQLException, ClassNotFoundException {
@@ -34,7 +34,7 @@ public class RegenArena {
 
         con = SQLSelection.getConnection();
 
-        con.createStatement().execute("INSERT INTO regen(world, x, y, z, type, data, arena, placed) VALUES('" + world + "', " + x + "," + y + ", " + z + ", " + type + ", " + data + ", " + arena + ", " + false + ");");
+        con.createStatement().execute("INSERT INTO regen(world, x, y, z, type, data, arena, placed) VALUES('" + world + "', " + x + "," + y + ", " + z + ", " + type + ", " + data + ", " + arena + ", '" + false + "');");
     }
 
     public static void resetInformation(int arena) throws SQLException, ClassNotFoundException {

@@ -16,6 +16,7 @@ import me.kyle.burnett.SkyBlockWarriors.DatabaseHandler.Queries.Regen.BlockLocat
 import me.kyle.burnett.SkyBlockWarriors.DatabaseHandler.Queries.Regen.RegenArena;
 import me.kyle.burnett.SkyBlockWarriors.Events.PlayerJoinArenaEvent;
 import me.kyle.burnett.SkyBlockWarriors.Events.PlayerLeaveArenaEvent;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
@@ -110,14 +111,20 @@ public class Game {
         this.blueT.setScore(0);
         this.yellowT.setScore(0);
         this.greenT.setScore(0);
-        this.removeEntities();
-
 
         if (Main.getInstance().Arena.getBoolean("Arena." + this.gameID + ".Active")) {
 
             if (!justCreated) {
 
                 this.build();
+
+                try {
+                    RegenArena.resetInformation(this.gameID);
+                } catch (SQLException | ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
+
+                this.removeEntities();
 
                 this.RED.setDisplayName(ChatColor.RED + "Red");
                 this.GREEN.setDisplayName(ChatColor.GREEN + "Green");
@@ -360,7 +367,7 @@ public class Game {
 
     public void checkEnd() {
 
-        int red, green, yellow, blue;
+/*        int red, green, yellow, blue;
         red = this.RED.getPlayers().size();
         green = this.GREEN.getPlayers().size();
         yellow = this.YELLOW.getPlayers().size();
@@ -388,7 +395,7 @@ public class Game {
         else if (green <= 0 && yellow <= 0 && blue <= 0 && yellow <= 0) {
 
             this.endGameNormal(null);
-        }
+        }*/
 
     }
 
@@ -2132,9 +2139,11 @@ public class Game {
 
                     List<BlockLocation> blocks = RegenArena.getBlocksPlaced(this.gameID);
 
-                    Block b = (Block) blocks.get(x);
+                    Block b = Bukkit.getServer().getWorld(blocks.get(x).getWorld()).getBlockAt(blocks.get(x).getX(), blocks.get(x).getY(), blocks.get(x).getZ());
 
-                    b.setTypeId(0);
+                    System.out.println(b.getWorld().getName() + ", " + b.getX() + ", "+ b.getY() +", " +  b.getZ());
+
+                    b.setType(Material.AIR);
 
                 }
             }
@@ -2143,14 +2152,18 @@ public class Game {
 
                 for(int x = 0; x < RegenArena.getBlocksBroken(this.gameID).size(); x++){
 
-                    List<BlockLocation> blocks = RegenArena.getBlocksPlaced(this.gameID);
+                    List<BlockLocation> blocks = RegenArena.getBlocksBroken(this.gameID);
 
-                    Block bb = (Block) blocks.get(x);
+                    Block b = Bukkit.getServer().getWorld(blocks.get(x).getWorld()).getBlockAt(blocks.get(x).getX(), blocks.get(x).getY(), blocks.get(x).getZ());
 
-                    Block b = this.world.getBlockAt(bb.getX(), bb.getY(), bb.getZ());
+                    if(b == null){
+                        System.out.println("b is null");
+                    }
 
-                    b.setData(bb.getData());
-                    b.setTypeId(bb.getTypeId());
+                    System.out.println(b.getWorld().getName() + ", " + b.getX() + ", "+ b.getY() +", " +  b.getZ());
+
+                    b.setData(blocks.get(x).getData());
+                    b.setTypeId(blocks.get(x).getBlock());
 
                 }
             }

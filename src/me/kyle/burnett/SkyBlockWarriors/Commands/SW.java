@@ -1169,8 +1169,6 @@ public class SW implements CommandExecutor {
 
                                     gm.getGameByID(Integer.parseInt(args[1])).endGame();
 
-                                    gm.getGameByID(Integer.parseInt(args[1])).prepareArena(false, false);
-
                                 } else {
 
                                     gm.getGameByID(Integer.parseInt(args[1])).prepareArena(false, false);
