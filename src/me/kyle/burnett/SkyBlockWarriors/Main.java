@@ -10,6 +10,7 @@ import me.kyle.burnett.SkyBlockWarriors.Commands.SW;
 import me.kyle.burnett.SkyBlockWarriors.Configs.ConfigManager;
 import me.kyle.burnett.SkyBlockWarriors.DatabaseHandler.SQLSelection;
 import me.kyle.burnett.SkyBlockWarriors.DatabaseHandler.Queries.Regen.BlockLocation;
+import me.kyle.burnett.SkyBlockWarriors.DatabaseHandler.Queries.Regen.RegenArena;
 import me.kyle.burnett.SkyBlockWarriors.Listeners.BlockBreak;
 import me.kyle.burnett.SkyBlockWarriors.Listeners.BlockBurn;
 import me.kyle.burnett.SkyBlockWarriors.Listeners.BlockForm;
@@ -125,6 +126,12 @@ public class Main extends JavaPlugin {
 
         if (Config.getBoolean("Debug-Mode")) {
             debug = true;
+        }
+
+        try {
+            RegenArena.checkTable();
+        } catch (SQLException | ClassNotFoundException e1) {
+            e1.printStackTrace();
         }
 
         setUp();
@@ -257,7 +264,6 @@ public class Main extends JavaPlugin {
         con = SQLSelection.getConnection();
 
         con.createStatement().execute("CREATE TABLE IF NOT EXISTS sbw(username VARCHAR(255), kills INTEGER, deaths INTEGER, wins INTEGER, losses INTEGER, played INTEGER)");
-
 
     }
 

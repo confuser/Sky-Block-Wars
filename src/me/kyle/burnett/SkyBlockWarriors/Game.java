@@ -12,6 +12,8 @@ import me.kyle.burnett.SkyBlockWarriors.DatabaseHandler.Queries.CreatePlayer;
 import me.kyle.burnett.SkyBlockWarriors.DatabaseHandler.Queries.PlayerLosses;
 import me.kyle.burnett.SkyBlockWarriors.DatabaseHandler.Queries.PlayerPlayed;
 import me.kyle.burnett.SkyBlockWarriors.DatabaseHandler.Queries.PlayerWins;
+import me.kyle.burnett.SkyBlockWarriors.DatabaseHandler.Queries.Regen.BlockLocation;
+import me.kyle.burnett.SkyBlockWarriors.DatabaseHandler.Queries.Regen.RegenArena;
 import me.kyle.burnett.SkyBlockWarriors.Events.PlayerJoinArenaEvent;
 import me.kyle.burnett.SkyBlockWarriors.Events.PlayerLeaveArenaEvent;
 import me.kyle.burnett.SkyBlockWarriors.Utils.WorldEditUtility;
@@ -117,9 +119,7 @@ public class Game {
 
             if (!justCreated) {
 
-                //this.build();
-                WorldEditUtility.getInstance().loadIslandSchematic(this.gameID);
-
+                this.build();
 
                 this.RED.setDisplayName(ChatColor.RED + "Red");
                 this.GREEN.setDisplayName(ChatColor.GREEN + "Green");
@@ -362,7 +362,7 @@ public class Game {
 
     public void checkEnd() {
 
-        int red, green, yellow, blue;
+/*        int red, green, yellow, blue;
         red = this.RED.getPlayers().size();
         green = this.GREEN.getPlayers().size();
         yellow = this.YELLOW.getPlayers().size();
@@ -390,7 +390,7 @@ public class Game {
         else if (green <= 0 && yellow <= 0 && blue <= 0 && yellow <= 0) {
 
             this.endGameNormal(null);
-        }
+        }*/
 
     }
 
@@ -2122,5 +2122,45 @@ public class Game {
                 e.remove();
             }
         }
+    }
+
+    public void build(){
+
+        try {
+
+            if(!RegenArena.getBlocksPlaced(this.gameID).isEmpty()){
+
+                for(int x = 0; x < RegenArena.getBlocksPlaced(this.gameID).size(); x++){
+
+                    List<BlockLocation> blocks = RegenArena.getBlocksPlaced(this.gameID);
+
+                    Block b = (Block) blocks.get(x);
+
+                    b.setTypeId(0);
+
+                }
+            }
+
+            if(!RegenArena.getBlocksBroken(this.gameID).isEmpty()){
+
+                for(int x = 0; x < RegenArena.getBlocksBroken(this.gameID).size(); x++){
+
+                    List<BlockLocation> blocks = RegenArena.getBlocksPlaced(this.gameID);
+
+                    Block bb = (Block) blocks.get(x);
+
+                    Block b = this.world.getBlockAt(bb.getX(), bb.getY(), bb.getZ());
+
+                    b.setData(bb.getData());
+                    b.setTypeId(bb.getTypeId());
+
+                }
+            }
+
+        } catch (SQLException | ClassNotFoundException e) {
+
+            e.printStackTrace();
+        }
+
     }
 }
