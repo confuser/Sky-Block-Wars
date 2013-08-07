@@ -38,16 +38,7 @@ public class RegenArena {
         con.createStatement().execute("INSERT INTO regen (world, x, y, z, block, arena, placed) VALUES('" + world + "', " + x + "," + y + ", " + z + ", " + type + ", " + arena + ", " + false + ");");
     }
 
-    public static void removeBlockPlaced(int arena, Block b) throws SQLException, ClassNotFoundException {
-
-        Connection con = null;
-
-        con = SQLSelection.getConnection();
-
-        con.createStatement().execute("DELETE FROM regen WHERE arena = " + arena + ";");
-    }
-
-    public static void removeBlockBroken(int arena, Block b) throws SQLException, ClassNotFoundException {
+    public static void resetInformation(int arena) throws SQLException, ClassNotFoundException {
 
         Connection con = null;
 
