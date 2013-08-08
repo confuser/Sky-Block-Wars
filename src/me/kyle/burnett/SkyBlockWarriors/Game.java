@@ -2139,7 +2139,7 @@ public class Game {
 
                     List<BlockLocation> blocks = RegenArena.getBlocksPlaced(this.gameID);
 
-                    Block b = Bukkit.getServer().getWorld(blocks.get(x).getWorld()).getBlockAt(blocks.get(x).getX(), blocks.get(x).getY(), blocks.get(x).getZ());
+                    Block b = this.world.getBlockAt(blocks.get(x).getX(), blocks.get(x).getY(), blocks.get(x).getZ());
 
                     System.out.println(b.getWorld().getName() + ", " + b.getX() + ", "+ b.getY() +", " +  b.getZ());
                     System.out.println(blocks.get(x).getWorld());
