@@ -44,9 +44,7 @@ public class BlockPlace implements Listener {
                     if(!RegenArena.getBlocksBroken(gm.getPlayerGame(e.getPlayer()).getGameID()).contains(bl)){
 
                         RegenArena.addBlockPlaced(b.getWorld().getName(), b.getX(), b.getY(), b.getZ(), b.getTypeId(), b.getData(), gm.getPlayerGame(e.getPlayer()).getGameID());
-
                     }
-
 
                 } catch (SQLException | ClassNotFoundException e1) {
                     e1.printStackTrace();

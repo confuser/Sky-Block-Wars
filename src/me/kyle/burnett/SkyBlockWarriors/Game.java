@@ -2142,7 +2142,7 @@ public class Game {
                     Block b = Bukkit.getServer().getWorld(blocks.get(x).getWorld()).getBlockAt(blocks.get(x).getX(), blocks.get(x).getY(), blocks.get(x).getZ());
 
                     System.out.println(b.getWorld().getName() + ", " + b.getX() + ", "+ b.getY() +", " +  b.getZ());
-
+                    System.out.println(blocks.get(x).getWorld());
                     b.setType(Material.AIR);
 
                 }
@@ -2161,7 +2161,7 @@ public class Game {
                     }
 
                     System.out.println(b.getWorld().getName() + ", " + b.getX() + ", "+ b.getY() +", " +  b.getZ());
-
+                    System.out.println(blocks.get(x).getWorld());
                     b.setData(blocks.get(x).getData());
                     b.setTypeId(blocks.get(x).getBlock());
 
