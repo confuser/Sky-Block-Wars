@@ -471,12 +471,24 @@ public class SW implements CommandExecutor {
 
                     else if (args[0].equalsIgnoreCase("reloadarenas")){
 
-                        for(Game g : gm.getGames()){
-                            if(g.getState().equals(ArenaState.IN_GAME) || g.getState().equals(ArenaState.STARTING)){
-                                g.endGame();
+                        if(p.hasPermission("skyblockwars.reloadarenas")){
+
+                            for(Game g : gm.getGames()){
+
+                                if(g.getState().equals(ArenaState.IN_GAME) || g.getState().equals(ArenaState.STARTING)){
+
+                                    g.endGame();
+                                }
                             }
+
+                            p.sendMessage(prefix + ChatColor.GREEN + "All arenas have been reloaded.");
+
+                        }else {
+
+                            p.sendMessage(perm);
                         }
-                        p.sendMessage(prefix + ChatColor.GREEN + "All arenas have been reloaded.");
+
+                        return true;
                     }
 
                     p.sendMessage(prefix + ChatColor.RED + "Unknown command. Use '/sw help' for a list of commands.");

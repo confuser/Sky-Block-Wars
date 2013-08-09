@@ -16,6 +16,7 @@ import me.kyle.burnett.SkyBlockWarriors.DatabaseHandler.Queries.Regen.BlockLocat
 import me.kyle.burnett.SkyBlockWarriors.DatabaseHandler.Queries.Regen.RegenArena;
 import me.kyle.burnett.SkyBlockWarriors.Events.PlayerJoinArenaEvent;
 import me.kyle.burnett.SkyBlockWarriors.Events.PlayerLeaveArenaEvent;
+import me.kyle.burnett.SkyBlockWarriors.Utils.WorldEditUtility;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -116,7 +117,7 @@ public class Game {
 
             if (!justCreated) {
 
-                this.build();
+                WorldEditUtility.getInstance().loadIslandSchematic(this.gameID);
 
                 try {
                     RegenArena.resetInformation(this.gameID);
@@ -367,7 +368,7 @@ public class Game {
 
     public void checkEnd() {
 
-/*        int red, green, yellow, blue;
+        int red, green, yellow, blue;
         red = this.RED.getPlayers().size();
         green = this.GREEN.getPlayers().size();
         yellow = this.YELLOW.getPlayers().size();
@@ -395,7 +396,7 @@ public class Game {
         else if (green <= 0 && yellow <= 0 && blue <= 0 && yellow <= 0) {
 
             this.endGameNormal(null);
-        }*/
+        }
 
     }
 
@@ -1865,7 +1866,7 @@ public class Game {
         return null;
     }
 
-    public boolean isBlockInArena(Location l) {
+    public boolean isBlockInArenaMove(Location l) {
 
         if (l.getWorld() != this.min.getWorld())
             return false;
@@ -1874,6 +1875,18 @@ public class Game {
         double z = l.getZ();
 
         return (x >= this.min.getBlockX()) && (x < this.max.getBlockX() + 1) && (z >= this.min.getBlockZ()) && (z < this.max.getBlockZ() + 1);
+    }
+
+    public boolean isBlockInArenaPlace(Location l) {
+
+        if (l.getWorld() != this.min.getWorld())
+            return false;
+
+        double x = l.getX();
+        double z = l.getZ();
+        double y = l.getY();
+
+        return (x >= this.min.getBlockX()) && (x < this.max.getBlockX() + 1) && (y >= this.min.getBlockY()) && (y < this.max.getBlockY() + 1) && (z >= this.min.getBlockZ()) && (z < this.max.getBlockZ() + 1);
     }
 
     public void updateSignPlayers() {

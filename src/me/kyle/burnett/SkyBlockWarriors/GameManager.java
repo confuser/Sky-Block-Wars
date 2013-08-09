@@ -23,7 +23,6 @@ public class GameManager {
     private HashMap<String, Integer> spectators = new HashMap<String, Integer>();
 
     public static GameManager getInstance() {
-
         return instance;
     }
 
@@ -332,11 +331,24 @@ public class GameManager {
         return playerGame;
     }
 
-    public boolean isBlockInArena(Block b) {
+    public boolean isBlockInArenaPlace(Block b) {
 
-        for (Game g : this.games) {
+        for (Game g : games) {
 
-            if (g.isBlockInArena(b.getLocation())) {
+            if (g.isBlockInArenaPlace(b.getLocation())) {
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public boolean isBlockInArenaMove(Block b) {
+
+        for (Game g : games) {
+
+            if (g.isBlockInArenaMove(b.getLocation())) {
 
                 return true;
             }
@@ -347,9 +359,9 @@ public class GameManager {
 
     public Game getBlockGame(Block b) {
 
-        for (Game g : this.games) {
+        for (Game g : games) {
 
-            if (g.isBlockInArena(b.getLocation())) {
+            if (g.isBlockInArenaPlace(b.getLocation())) {
 
                 return g;
             }

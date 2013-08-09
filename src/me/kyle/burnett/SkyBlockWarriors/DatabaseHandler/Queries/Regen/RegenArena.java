@@ -56,7 +56,7 @@ public class RegenArena {
 
         con = SQLSelection.getConnection();
 
-        rs = con.createStatement().executeQuery("SELECT world, x, y, z, type, data, placed FROM regen WHERE arena = " + arena + ";");
+        rs = con.createStatement().executeQuery("SELECT world, x, y, z, type, data FROM regen WHERE arena = " + arena + " AND placed = 'true';");
 
         while (rs.next()) {
             blocks.add(new BlockLocation(rs.getString(1), rs.getInt(2), rs.getInt(3), rs.getInt(4), rs.getInt(5), rs.getByte(6)));
@@ -74,7 +74,7 @@ public class RegenArena {
 
         con = SQLSelection.getConnection();
 
-        rs = con.createStatement().executeQuery("SELECT world, x, y, z, type, data, placed FROM regen WHERE arena = " + arena + ";");
+        rs = con.createStatement().executeQuery("SELECT world, x, y, z, type, data FROM regen WHERE arena = " + arena + " AND placed = 'false';");
 
         while (rs.next()) {
             blocks.add(new BlockLocation(rs.getString(1), rs.getInt(2), rs.getInt(3), rs.getInt(4), rs.getInt(5), rs.getByte(6)));

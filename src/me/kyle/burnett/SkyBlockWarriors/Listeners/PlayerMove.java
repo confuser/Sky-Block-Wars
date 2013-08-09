@@ -1,5 +1,8 @@
 package me.kyle.burnett.SkyBlockWarriors.Listeners;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import me.kyle.burnett.SkyBlockWarriors.Game;
 import me.kyle.burnett.SkyBlockWarriors.GameManager;
 
@@ -10,6 +13,8 @@ import org.bukkit.event.player.PlayerMoveEvent;
 
 public class PlayerMove implements Listener {
 
+
+    private List<String> players = new ArrayList<String>();
 
     @EventHandler
     public void onMove(PlayerMoveEvent e) {
@@ -22,13 +27,16 @@ public class PlayerMove implements Listener {
 
                 Game g = GameManager.getInstance().getPlayerGame(p);
 
-                if (!g.isBlockInArena(p.getLocation())) {
+                if (!g.isBlockInArenaMove(p.getLocation())) {
 
                     e.setCancelled(true);
 
                     e.setTo(e.getFrom());
+                    players.add(e.getPlayer().getName());
                 }
             }
         }
     }
+
+
 }

@@ -12,18 +12,10 @@ import me.kyle.burnett.SkyBlockWarriors.DatabaseHandler.SQLSelection;
 import me.kyle.burnett.SkyBlockWarriors.DatabaseHandler.Queries.Regen.BlockLocation;
 import me.kyle.burnett.SkyBlockWarriors.DatabaseHandler.Queries.Regen.RegenArena;
 import me.kyle.burnett.SkyBlockWarriors.Listeners.BlockBreak;
-import me.kyle.burnett.SkyBlockWarriors.Listeners.BlockBurn;
-import me.kyle.burnett.SkyBlockWarriors.Listeners.BlockForm;
-import me.kyle.burnett.SkyBlockWarriors.Listeners.BlockGrow;
-import me.kyle.burnett.SkyBlockWarriors.Listeners.BlockPhysics;
 import me.kyle.burnett.SkyBlockWarriors.Listeners.BlockPlace;
-import me.kyle.burnett.SkyBlockWarriors.Listeners.BlockSpread;
 import me.kyle.burnett.SkyBlockWarriors.Listeners.Command;
 import me.kyle.burnett.SkyBlockWarriors.Listeners.Interact;
 import me.kyle.burnett.SkyBlockWarriors.Listeners.InventoryEvent;
-import me.kyle.burnett.SkyBlockWarriors.Listeners.LeavesDecay;
-import me.kyle.burnett.SkyBlockWarriors.Listeners.PistonExtend;
-import me.kyle.burnett.SkyBlockWarriors.Listeners.PistonRetract;
 import me.kyle.burnett.SkyBlockWarriors.Listeners.PlayerDamageEvent;
 import me.kyle.burnett.SkyBlockWarriors.Listeners.PlayerDeath;
 import me.kyle.burnett.SkyBlockWarriors.Listeners.PlayerLeave;
@@ -113,14 +105,14 @@ public class Main extends JavaPlugin {
         pm.registerEvents(new BlockPlace(), this);
         pm.registerEvents(new InventoryEvent(), this);
         pm.registerEvents(new Command(), this);
-        pm.registerEvents(new BlockBurn(), this);
+   /*   pm.registerEvents(new BlockBurn(), this);
         pm.registerEvents(new BlockForm(), this);
         pm.registerEvents(new BlockGrow(), this);
         pm.registerEvents(new BlockPhysics(), this);
         pm.registerEvents(new BlockSpread(), this);
         pm.registerEvents(new LeavesDecay(), this);
         pm.registerEvents(new PistonExtend(), this);
-        pm.registerEvents(new PistonRetract(), this);
+        pm.registerEvents(new PistonRetract(), this);*/
 
         getCommand("skyblockw").setExecutor(new SW());
 

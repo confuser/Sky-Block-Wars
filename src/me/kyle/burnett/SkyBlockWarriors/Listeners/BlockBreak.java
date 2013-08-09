@@ -1,15 +1,11 @@
 package me.kyle.burnett.SkyBlockWarriors.Listeners;
 
-import java.sql.SQLException;
 import java.util.List;
 
 import me.kyle.burnett.SkyBlockWarriors.ArenaState;
 import me.kyle.burnett.SkyBlockWarriors.GameManager;
 import me.kyle.burnett.SkyBlockWarriors.Main;
 import me.kyle.burnett.SkyBlockWarriors.Configs.ConfigManager;
-import me.kyle.burnett.SkyBlockWarriors.DatabaseHandler.Queries.Regen.BlockLocation;
-import me.kyle.burnett.SkyBlockWarriors.DatabaseHandler.Queries.Regen.RegenArena;
-import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -26,14 +22,29 @@ public class BlockBreak implements Listener {
 
             if (!gm.isEditing(e.getPlayer())) {
 
-                if (gm.isBlockInArena(e.getBlock())) {
+                if (gm.isBlockInArenaPlace(e.getBlock())) {
 
                     e.setCancelled(true);
                 }
             }
         }
 
-        if (gm.isPlayerInGame(e.getPlayer())) {
+        if(gm.isPlayerInGame(e.getPlayer())) {
+
+            if(!gm.getPlayerGame(e.getPlayer()).getState().equals(ArenaState.IN_GAME)){
+
+                e.setCancelled(true);
+
+            } else {
+
+                if(!gm.getPlayerGame(e.getPlayer()).isBlockInArenaPlace(e.getBlock().getLocation())){
+
+                    e.setCancelled(true);
+                }
+            }
+        }
+
+/*        if (gm.isPlayerInGame(e.getPlayer())) {
 
             if(gm.getPlayerGame(e.getPlayer()).getState().equals(ArenaState.IN_GAME)) {
 
@@ -55,7 +66,7 @@ public class BlockBreak implements Listener {
 
             }
 
-        }
+        }*/
 
         if (e.getBlock().getState() instanceof Sign) {
 
