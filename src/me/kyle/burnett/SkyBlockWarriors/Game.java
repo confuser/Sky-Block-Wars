@@ -1897,28 +1897,23 @@ public class Game {
 
             Vector v = this.vecFromString(signs.get(x));
 
-            Block b = null;
+            Block b = this.world.getBlockAt(v.getBlockX(), v.getBlockY(), v.getBlockZ());
 
-            if(this.world.getBlockAt(v.getBlockX(), v.getBlockY(), v.getBlockZ()).equals(Material.SIGN) || this.world.getBlockAt(v.getBlockX(), v.getBlockY(), v.getBlockZ()).equals(Material.SIGN_POST)){
-                b = this.world.getBlockAt(v.getBlockX(), v.getBlockY(), v.getBlockZ());
-            }
+            if (b.getState() instanceof Sign) {
 
-            if (b != null) {
+                Sign s = (Sign) b.getState();
 
-                if (b.getState() instanceof Sign) {
+                if (this.players.size() >= Main.getInstance().Config.getInt("Max-People-In-A-Team") * 4) {
 
-                    Sign s = (Sign) b.getState();
-
-                    if (this.players.size() >= Main.getInstance().Config.getInt("Max-People-In-A-Team") * 4) {
-
-                        s.setLine(0, "§4§l[Full]");
-                    }
-
-                    s.setLine(2, this.players.size() + "/" + Main.getInstance().Config.getInt("Max-People-In-A-Team") * 4);
-
-                    s.update(true);
+                    s.setLine(0, "§4§l[Full]");
                 }
+
+                s.setLine(2, this.players.size() + "/" + Main.getInstance().Config.getInt("Max-People-In-A-Team") * 4);
+
+                s.update(true);
+
             }
+
         }
     }
 
@@ -1929,15 +1924,14 @@ public class Game {
 
             Vector v = this.vecFromString(signs.get(x));
 
-            Block b = null;
+            Block b = this.world.getBlockAt(v.getBlockX(), v.getBlockY(), v.getBlockZ());
 
-            if(this.world.getBlockAt(v.getBlockX(), v.getBlockY(), v.getBlockZ()).equals(Material.SIGN) || this.world.getBlockAt(v.getBlockX(), v.getBlockY(), v.getBlockZ()).equals(Material.SIGN_POST)){
-                b = this.world.getBlockAt(v.getBlockX(), v.getBlockY(), v.getBlockZ());
+            if (b.getState() instanceof Sign) {
+
+                this.world.getChunkAt(b).load();
+                this.updateSignState();
+                this.updateSignPlayers();
             }
-
-            this.world.getChunkAt(b).load();
-            this.updateSignState();
-            this.updateSignPlayers();
         }
 
     }
@@ -1950,68 +1944,62 @@ public class Game {
 
             Vector v = this.vecFromString(signs.get(x));
 
-            Block b = null;
+            Block b = this.world.getBlockAt(v.getBlockX(), v.getBlockY(), v.getBlockZ());
 
-            if(this.world.getBlockAt(v.getBlockX(), v.getBlockY(), v.getBlockZ()).equals(Material.SIGN) || this.world.getBlockAt(v.getBlockX(), v.getBlockY(), v.getBlockZ()).equals(Material.SIGN_POST)){
-                b = this.world.getBlockAt(v.getBlockX(), v.getBlockY(), v.getBlockZ());
-            }
+            if (b.getState() instanceof Sign) {
 
-            if (b != null) {
+                Sign s = (Sign) b.getState();
 
-                if (b.getState() instanceof Sign) {
+                if (this.getState().equals(ArenaState.WAITING)) {
 
-                    Sign s = (Sign) b.getState();
+                    ((Sign) s).setLine(0, "§l§9[Join]");
 
-                    if (this.getState().equals(ArenaState.WAITING)) {
+                    ((Sign) s).setLine(1, "SBW " + this.gameID + " - Waiting");
 
-                        ((Sign) s).setLine(0, "§l§9[Join]");
+                } else if (this.getState().equals(ArenaState.STARTING)) {
 
-                        ((Sign) s).setLine(1, "SBW " + this.gameID + " - Waiting");
+                    if (this.players.size() >= Main.getInstance().Config.getInt("Max-People-In-A-Team") * 4) {
 
-                    } else if (this.getState().equals(ArenaState.STARTING)) {
-
-                        if (this.players.size() >= Main.getInstance().Config.getInt("Max-People-In-A-Team") * 4) {
-
-                            ((Sign) s).setLine(0, "§4§l[Full]");
-
-                            ((Sign) s).setLine(1, "SBW " + this.gameID + " -Starting");
-
-                            s.update();
-
-                            return;
-                        }
-
-                        ((Sign) s).setLine(0, "§l§9[Join]");
+                        ((Sign) s).setLine(0, "§4§l[Full]");
 
                         ((Sign) s).setLine(1, "SBW " + this.gameID + " -Starting");
 
-                    } else if (this.getState().equals(ArenaState.IN_GAME)) {
+                        s.update();
 
-                        if (Main.getInstance().Spawns.contains("Spawn." + gameID + ".Spectator")) {
+                        return;
+                    }
 
-                            ((Sign) s).setLine(0, "§l§9[Spectate]");
+                    ((Sign) s).setLine(0, "§l§9[Join]");
 
-                            ((Sign) s).setLine(1, "SBW " + this.gameID + " - InGame");
+                    ((Sign) s).setLine(1, "SBW " + this.gameID + " -Starting");
 
-                        } else {
+                } else if (this.getState().equals(ArenaState.IN_GAME)) {
 
-                            ((Sign) s).setLine(0, "§l§9[InGame]");
+                    if (Main.getInstance().Spawns.contains("Spawn." + gameID + ".Spectator")) {
 
-                            ((Sign) s).setLine(1, "SBW " + this.gameID + " - InGame");
+                        ((Sign) s).setLine(0, "§l§9[Spectate]");
 
-                        }
+                        ((Sign) s).setLine(1, "SBW " + this.gameID + " - InGame");
 
                     } else {
 
-                        ((Sign) s).setLine(0, "§l§4UnJoinable");
+                        ((Sign) s).setLine(0, "§l§9[InGame]");
 
-                        ((Sign) s).setLine(1, "SBW " + this.gameID + " - Other");
+                        ((Sign) s).setLine(1, "SBW " + this.gameID + " - InGame");
+
                     }
 
-                    s.update(true);
+                } else {
 
+                    ((Sign) s).setLine(0, "§l§4UnJoinable");
+
+                    ((Sign) s).setLine(1, "SBW " + this.gameID + " - Other");
                 }
+
+                s.update(true);
+
             }
+
         }
     }
 

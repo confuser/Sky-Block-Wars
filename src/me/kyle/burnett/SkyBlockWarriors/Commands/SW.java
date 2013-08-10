@@ -498,19 +498,7 @@ public class SW implements CommandExecutor {
 
                 if (args.length == 2) {
 
-                    if(args[0].equalsIgnoreCase("loadchunk")){
-
-                        if(gm.checkGameByID(Integer.parseInt(args[1]))){
-
-                            gm.getGameByID(Integer.parseInt(args[1])).loadChunk();
-
-                            p.sendMessage(prefix + ChatColor.GREEN + "Loaded for " + args[1] +".");
-
-                        }
-                        return true;
-                    }
-
-                    else if (args[0].equalsIgnoreCase("setspawn")) {
+                    if (args[0].equalsIgnoreCase("setspawn")) {
 
                         if (p.hasPermission("skyblockwars.setspawn")) {
 
@@ -1290,6 +1278,7 @@ public class SW implements CommandExecutor {
                                 p.sendMessage(ChatColor.GOLD + "/sw confirm - " + ChatColor.BLUE + "Confirm an override action.");
                                 p.sendMessage(ChatColor.GOLD + "/sw edit <arena> - " + ChatColor.BLUE + "Enter edit mode of an arena");
                                 p.sendMessage(ChatColor.GOLD + "/sw setspawn " + teams + " - " + ChatColor.BLUE + "Set the spawns for each team.");
+                                p.sendMessage(ChatColor.GOLD + "/sw removespawn " + teams + " - " + ChatColor.BLUE + "Remove the spawn for a team.");
                                 p.sendMessage(ChatColor.GOLD + "/sw addchest <spawn/side/center> - " + ChatColor.BLUE + "Add the location and type of the arena chests.");
                                 p.sendMessage(ChatColor.GOLD + "/sw removechest - " + ChatColor.BLUE + "Removes the current chest of your selection.");
 
@@ -1315,6 +1304,7 @@ public class SW implements CommandExecutor {
                                 p.sendMessage(ChatColor.GOLD + "/sw save <arena> - " + ChatColor.BLUE + "Save block changes made to an arena.");
                                 p.sendMessage(ChatColor.GOLD + "/sw load <arena> - " + ChatColor.BLUE + "Load a schematic of an arena.");
                                 p.sendMessage(ChatColor.GOLD + "/sw reload - " + ChatColor.BLUE + "Reload the configs.");
+                                p.sendMessage(ChatColor.GOLD + "/sw reloadarenas - " + ChatColor.BLUE + "Reload's all the arenas.");
 
                             } else if (!p.hasPermission("skyblockwars.help.admin")) {
 

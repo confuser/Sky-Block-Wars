@@ -15,6 +15,7 @@ permissions:
             skyblockwars.builder: true
             skyblockwars.usecommands: true
             skyblockwars.setlobby: true
+            skyblockwars.setwaiting: true
             skyblockwars.enable: true
             skyblockwars.disable: true
             skyblockwars.activate: true
@@ -26,6 +27,7 @@ permissions:
             skyblockwars.prepare: true
             skyblockwars.endgame: true
             skyblockwars.updatesigns: true
+            skyblockwars.reloadarenas: true
         default: op
     skyblockwars.builder:
         children:
@@ -79,6 +81,8 @@ permissions:
         default: op
     skyblockwars.setlobby:
         default: op
+    skyblockwars.setwaiting:
+        default: op
     skyblockwars.enable:
         default: op
     skyblockwars.disable:
@@ -116,4 +120,6 @@ permissions:
     skyblockwars.info:
         default: op
     skyblockwars.updatesigns:
+        default: op
+    skyblockwars.reloadarenas:
         default: op
