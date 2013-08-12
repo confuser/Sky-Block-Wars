@@ -63,7 +63,6 @@ public class SW implements CommandExecutor {
                         p.sendMessage(ChatColor.GOLD + "/sw spectate [arena] - " + ChatColor.BLUE + "Specate a specific arena.");
                         p.sendMessage(ChatColor.GOLD + "/sw list - " + ChatColor.BLUE + "List players in your current game.");
                         p.sendMessage(ChatColor.GOLD + "/sw listgames -  " + ChatColor.BLUE + "List all available games.");
-                        p.sendMessage(ChatColor.GOLD + "/sw team " + teams + " -  " + ChatColor.BLUE + "Choose a team once you join a game.");
                         p.sendMessage(ChatColor.GOLD + "/sw vote -  " + ChatColor.BLUE + "Vote to start the game.");
                         p.sendMessage(ChatColor.GOLD + "/sw leader {Kills, Deaths, Wins, Losses, Played} - " + ChatColor.BLUE + "Shows leaderboards for selected category.");
                         p.sendMessage(ChatColor.GOLD + "/sw stats {player} - " + ChatColor.BLUE + "Gives more indepth stats for specified player.");
@@ -1132,8 +1131,8 @@ public class SW implements CommandExecutor {
                                 p.sendMessage(ChatColor.GOLD + "/sw create [arena] - " + ChatColor.BLUE + "Create's a new arena or overrides a previous arena if specified.");
                                 p.sendMessage(ChatColor.GOLD + "/sw confirm - " + ChatColor.BLUE + "Confirm an override action.");
                                 p.sendMessage(ChatColor.GOLD + "/sw edit <arena> - " + ChatColor.BLUE + "Enter edit mode of an arena");
-                                p.sendMessage(ChatColor.GOLD + "/sw setspawn " + teams + " - " + ChatColor.BLUE + "Set the spawns for each team.");
-                                p.sendMessage(ChatColor.GOLD + "/sw removespawn " + teams + " - " + ChatColor.BLUE + "Remove the spawn for a team.");
+                                p.sendMessage(ChatColor.GOLD + "/sw setspawn - " + ChatColor.BLUE + "Set the spawns for each team.");
+                                p.sendMessage(ChatColor.GOLD + "/sw removespawn <spawn>" + " - " + ChatColor.BLUE + "Remove the spawn for a team.");
                                 p.sendMessage(ChatColor.GOLD + "/sw addchest <spawn/side/center> - " + ChatColor.BLUE + "Add the location and type of the arena chests.");
                                 p.sendMessage(ChatColor.GOLD + "/sw removechest - " + ChatColor.BLUE + "Removes the current chest of your selection.");
 
@@ -1149,7 +1148,7 @@ public class SW implements CommandExecutor {
 
                                 p.sendMessage(ChatColor.GOLD + "----------" + ChatColor.GREEN + "Sky Block War's Admin Help" + ChatColor.GOLD + "----------");
                                 p.sendMessage(ChatColor.GOLD + "/sw setlobby - " + ChatColor.BLUE + "Set the lobby where player's get teleported to.");
-                                p.sendMessage(ChatColor.GOLD + "/sw setwaiting - " + ChatColor.BLUE + "Set the waiting lobby where player's get teleported to after they join.");
+                                p.sendMessage(ChatColor.GOLD + "/sw setwaiting <arena> - " + ChatColor.BLUE + "Set the waiting lobby where player's get teleported to after they join.");
                                 p.sendMessage(ChatColor.GOLD + "/sw prepare <arena> - " + ChatColor.BLUE + "Completely restart the arena disregarding what state its in.");
                                 p.sendMessage(ChatColor.GOLD + "/sw enable <arena> - " + ChatColor.BLUE + "Enable an arena for editing.");
                                 p.sendMessage(ChatColor.GOLD + "/sw disable <arena> - " + ChatColor.BLUE + "Disable an arena. Will not show up in '/sw listgames'.");
