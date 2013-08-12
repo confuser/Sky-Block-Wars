@@ -1,19 +1,11 @@
 package me.kyle.burnett.SkyBlockWarriors.Listeners;
 
-import me.kyle.burnett.SkyBlockWarriors.GameManager;
-
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.scoreboard.Team;
 
 public class PlayerDamageEvent implements Listener {
 
 
-    @EventHandler
+/*    @EventHandler
     public void playerDamage(EntityDamageByEntityEvent e) {
         Entity ent = e.getEntity();
 
@@ -31,10 +23,10 @@ public class PlayerDamageEvent implements Listener {
                     if (ed instanceof Player) {
 
                         Player pd = (Player) ed;
-                        Team team = gm.getPlayerGame(p).getPlayerTeam(p);
-                        if (team.getPlayers().contains(Bukkit.getServer().getOfflinePlayer(pd.getName()))) {
-                            e.setCancelled(true);
-                        }
+                       // Team team = gm.getPlayerGame(p).getPlayerTeam(p);
+                       // if (team.getPlayers().contains(Bukkit.getServer().getOfflinePlayer(pd.getName()))) {
+                        //    e.setCancelled(true);
+                       // }
                     }
                 }
 
@@ -42,6 +34,6 @@ public class PlayerDamageEvent implements Listener {
 
 
         }
-    }
+    }*/
 
 }

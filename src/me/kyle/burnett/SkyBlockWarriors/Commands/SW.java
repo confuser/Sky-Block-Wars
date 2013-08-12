@@ -490,6 +490,30 @@ public class SW implements CommandExecutor {
 
                         return true;
                     }
+                    else if (args[0].equalsIgnoreCase("addspawn")) {
+
+                        if (p.hasPermission("skyblockwars.addspawn")) {
+
+                            if (gm.isEditing(p)) {
+
+                                  Game g = gm.getGameEditing(p);
+
+                                  g.addSpawn(p);
+
+                                  p.sendMessage(prefix + ChatColor.GREEN + "Spawn " + ChatColor.GOLD + args[1] + " has been added.");
+
+                            } else if (!gm.isEditing(p)) {
+
+                                p.sendMessage(prefix + ChatColor.RED + "You are not editing an arena.");
+                            }
+
+                        } else if (!p.hasPermission("skyblockwars.addspawn")) {
+
+                            p.sendMessage(perm);
+                        }
+
+                        return true;
+                    }
 
                     p.sendMessage(prefix + ChatColor.RED + "Unknown command. Use '/sw help' for a list of commands.");
 
@@ -498,58 +522,6 @@ public class SW implements CommandExecutor {
 
                 if (args.length == 2) {
 
-                    if (args[0].equalsIgnoreCase("setspawn")) {
-
-                        if (p.hasPermission("skyblockwars.setspawn")) {
-
-                            if (gm.isEditing(p)) {
-
-                                if (args[1].equalsIgnoreCase("red")) {
-
-                                    Game g = gm.getGameEditing(p);
-
-                                    g.addRedSpawn(p);
-
-                                    p.sendMessage(prefix + ChatColor.RED + "Red " + ChatColor.GREEN + "team spawn set for arena " + ChatColor.GOLD + g.getGameID() + ChatColor.GREEN + ".");
-
-                                } else if (args[1].equalsIgnoreCase("blue")) {
-
-                                    Game g = gm.getGameEditing(p);
-
-                                    g.addBlueSpawn(p);
-
-                                    p.sendMessage(prefix + ChatColor.BLUE + "Blue " + ChatColor.GREEN + "team spawn set for arena " + ChatColor.GOLD + g.getGameID() + ChatColor.GREEN + ".");
-
-                                } else if (args[1].equalsIgnoreCase("green")) {
-
-                                    Game g = gm.getGameEditing(p);
-
-                                    g.addGreenSpawn(p);
-
-                                    p.sendMessage(prefix + ChatColor.DARK_GREEN + "Green " + ChatColor.GREEN + "team spawn set for arena " + ChatColor.GOLD + g.getGameID() + ChatColor.GREEN + ".");
-
-                                } else if (args[1].equalsIgnoreCase("yellow")) {
-
-                                    Game g = gm.getGameEditing(p);
-
-                                    g.addYellowSpawn(p);
-
-                                    p.sendMessage(prefix + ChatColor.YELLOW + "Yellow " + ChatColor.GREEN + "team spawn set for arena " + ChatColor.GOLD + g.getGameID() + ChatColor.GREEN + ".");
-
-                                }
-
-                            } else if (!gm.isEditing(p)) {
-
-                                p.sendMessage(prefix + ChatColor.RED + "You are not editing an arena.");
-                            }
-
-                        } else if (!p.hasPermission("skyblockwars.setspawn")) {
-
-                            p.sendMessage(perm);
-                        }
-
-                        return true;
-                    }
 
                     if (args[0].equalsIgnoreCase("removespawn")) {
 
@@ -557,37 +529,13 @@ public class SW implements CommandExecutor {
 
                             if (gm.isEditing(p)) {
 
-                                if (args[1].equalsIgnoreCase("red")) {
+                                if (gm.getGameEditing(p).isSpawn(Integer.parseInt(args[1]))) {
 
                                     Game g = gm.getGameEditing(p);
 
-                                    g.removeRedSpawn();
+                                    g.removeSpawn(Integer.parseInt(args[1]));
 
-                                    p.sendMessage(prefix + ChatColor.RED + "Red " + ChatColor.GREEN + "spawn has been removed.");
-
-                                } else if (args[1].equalsIgnoreCase("blue")) {
-
-                                    Game g = gm.getGameEditing(p);
-
-                                    g.removeBlueSpawn();
-
-                                    p.sendMessage(prefix + ChatColor.BLUE + "Blue " + ChatColor.GREEN + "spawn has been removed.");
-
-                                } else if (args[1].equalsIgnoreCase("green")) {
-
-                                    Game g = gm.getGameEditing(p);
-
-                                    g.removeGreenSpawn();
-
-                                    p.sendMessage(prefix + ChatColor.DARK_GREEN + "Green " + ChatColor.GREEN + "spawn has been removed.");
-
-                                } else if (args[1].equalsIgnoreCase("yellow")) {
-
-                                    Game g = gm.getGameEditing(p);
-
-                                    g.removeRedSpawn();
-
-                                    p.sendMessage(prefix + ChatColor.YELLOW + "YELLOW " + ChatColor.GREEN + "spawn has been removed.");
+                                    p.sendMessage(prefix + ChatColor.GREEN + "Spawn " + ChatColor.GOLD + args[1] + " has been removed.");
 
                                 } else if (args[1].equalsIgnoreCase("spectator")) {
 
@@ -596,6 +544,10 @@ public class SW implements CommandExecutor {
                                     g.removeSpectatorSpawn();
 
                                     p.sendMessage(prefix + ChatColor.GRAY + "Spectator " + ChatColor.GREEN + "spawn has been removed.");
+
+                                } else if (!gm.getGameEditing(p).isSpawn(Integer.parseInt(args[1]))) {
+
+                                    p.sendMessage(prefix + ChatColor.RED + "That spawn does not exist.");
                                 }
 
                             } else if (!gm.isEditing(p)) {
@@ -1060,104 +1012,7 @@ public class SW implements CommandExecutor {
                         return true;
                     }
 
-                    else if (args[0].equalsIgnoreCase("team")) {
-
-                        if (p.hasPermission("skyblockwars.create")) {
-
-                            if (gm.isPlayerInGame(p)) {
-
-                                Game g = gm.getPlayerGame(p);
-
-                                if (g.getState().equals(ArenaState.WAITING)) {
-
-                                    if (args[1].equalsIgnoreCase("red")) {
-
-                                        if (g.isRedAvailable()) {
-
-                                            if (g.isPlayerInTeam(p)) {
-
-                                                g.removeFromTeam(p);
-                                            }
-
-                                            g.setTeamRed(p);
-                                            p.sendMessage(prefix + ChatColor.GREEN + "Joined team " + ChatColor.RED + "red" + ChatColor.GREEN + ".");
-
-                                        } else if (!g.isRedAvailable()) {
-
-                                            p.sendMessage(prefix + ChatColor.RED + "You can not join red, try joining another team or waiting for the teams to even out.");
-                                        }
-
-                                    } else if (args[1].equalsIgnoreCase("blue")) {
-
-                                        if (g.isBlueAvailable()) {
-
-                                            if (g.isPlayerInTeam(p)) {
-
-                                                g.removeFromTeam(p);
-                                            }
-
-                                            g.setTeamRed(p);
-                                            p.sendMessage(prefix + ChatColor.GREEN + "Joined team " + ChatColor.BLUE + "blue" + ChatColor.GREEN + ".");
-
-                                        } else if (!g.isBlueAvailable()) {
-
-                                            p.sendMessage(prefix + ChatColor.RED + "You can not join" + ChatColor.BLUE + " blue" + ChatColor.RED + ", try joining another team or waiting for the teams to even out.");
-                                        }
-
-                                    } else if (args[1].equalsIgnoreCase("green")) {
-
-                                        if (g.isGreenAvailable()) {
-
-                                            if (g.isPlayerInTeam(p)) {
-
-                                                g.removeFromTeam(p);
-                                            }
-
-                                            g.setTeamRed(p);
-                                            p.sendMessage(prefix + ChatColor.GREEN + "Joined team " + ChatColor.DARK_GREEN + "green.");
-
-                                        } else if (!g.isGreenAvailable()) {
-
-                                            p.sendMessage(prefix + ChatColor.RED + "You can not join" + ChatColor.DARK_GREEN + " green" + ChatColor.RED + ", try joining another team or waiting for the teams to even out.");
-                                        }
-
-                                    } else if (args[1].equalsIgnoreCase("yellow")) {
-
-                                        if (g.isYellowAvailable()) {
-
-                                            if (g.isPlayerInTeam(p)) {
-
-                                                g.removeFromTeam(p);
-                                            }
-
-                                            g.setTeamRed(p);
-                                            p.sendMessage(prefix + ChatColor.GREEN + "Joined team " + ChatColor.YELLOW + "yellow" + ChatColor.GREEN + ".");
-
-                                        } else if (!g.isYellowAvailable()) {
-
-                                            p.sendMessage(prefix + ChatColor.RED + "You can not join" + ChatColor.YELLOW + " yellow" + ChatColor.RED + ", try joining another team or waiting for the teams to even out.");
-                                        }
-                                    }
-
-                                } else if (!g.getState().equals(ArenaState.WAITING)) {
-
-                                    p.sendMessage(prefix + ChatColor.RED + "You can not change team when the game is starting or has already started.");
-                                }
-
-                            } else if (!gm.isPlayerInGame(p)) {
-
-                                p.sendMessage(prefix + ChatColor.RED + "You are not in a game.");
-                            }
-
-                        } else if (p.hasPermission("skyblockwars.team")) {
-
-                            p.sendMessage(perm);
-                        }
-
-                        return true;
-                    }
-
-                    if (args[0].equalsIgnoreCase("prepare")) {
+                    else if (args[0].equalsIgnoreCase("prepare")) {
 
                         if (p.hasPermission("skyblockwars.prepare")) {
 

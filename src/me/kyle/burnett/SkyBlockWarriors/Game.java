@@ -4,7 +4,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Random;
 import java.util.logging.Level;
 
 import me.kyle.burnett.SkyBlockWarriors.Configs.ConfigManager;
@@ -20,11 +19,9 @@ import me.kyle.burnett.SkyBlockWarriors.Utils.WorldEditUtility;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.DyeColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
@@ -32,24 +29,11 @@ import org.bukkit.block.Sign;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.material.Wool;
-import org.bukkit.scoreboard.DisplaySlot;
-import org.bukkit.scoreboard.Objective;
-import org.bukkit.scoreboard.Score;
-import org.bukkit.scoreboard.Scoreboard;
-import org.bukkit.scoreboard.ScoreboardManager;
 import org.bukkit.scoreboard.Team;
 import org.bukkit.util.Vector;
 
 public class Game {
 
-    private ScoreboardManager manager = Bukkit.getScoreboardManager();
-    private Scoreboard board = manager.getNewScoreboard();
-    private Team BLUE = board.registerNewTeam("Blue Team");
-    private Team RED = board.registerNewTeam("Red Team");
-    private Team YELLOW = board.registerNewTeam("Yellow Team");
-    private Team GREEN = board.registerNewTeam("Green Team");
-    private Objective objective = board.registerNewObjective("test", "dummy");
     private ArenaState state;
     private List<String> unteamed = new ArrayList<String>();
     private List<String> players = new ArrayList<String>();
@@ -58,14 +42,12 @@ public class Game {
     private List<String> spectators = new ArrayList<String>();
     private HashMap<String, Team> team = new HashMap<String, Team>();
     private HashMap<String, GameMode> saveGM = new HashMap<String, GameMode>();
+    private HashMap<String, Location> spawns = new HashMap<String, Location>();
+    private HashMap<String, Integer> spawnsID = new HashMap<String, Integer>();
     private int gameID;
     private int count;
     private int task;
     private int announcer;
-    private Score redT = objective.getScore(Bukkit.getOfflinePlayer(ChatColor.RED + "Red: "));
-    private Score greenT = objective.getScore(Bukkit.getOfflinePlayer(ChatColor.GREEN + "Green:"));
-    private Score blueT = objective.getScore(Bukkit.getOfflinePlayer(ChatColor.BLUE + "Blue: "));
-    private Score yellowT = objective.getScore(Bukkit.getOfflinePlayer(ChatColor.YELLOW + "Yellow: "));
     private String prefix = ChatColor.GOLD + "[" + ChatColor.BLUE + "SBW" + ChatColor.GOLD + "] ";
     private boolean starting;
     private boolean deactivate = false;
@@ -108,10 +90,6 @@ public class Game {
         this.unteamed.clear();
         this.editors.clear();
         this.saveGM.clear();
-        this.redT.setScore(0);
-        this.blueT.setScore(0);
-        this.yellowT.setScore(0);
-        this.greenT.setScore(0);
 
         if (Main.getInstance().Arena.getBoolean("Arena." + this.gameID + ".Active")) {
 
@@ -126,11 +104,6 @@ public class Game {
                 }
 
                 this.removeEntities();
-
-                this.RED.setDisplayName(ChatColor.RED + "Red");
-                this.GREEN.setDisplayName(ChatColor.GREEN + "Green");
-                this.BLUE.setDisplayName(ChatColor.RED + "Blue");
-                this.YELLOW.setDisplayName(ChatColor.RED + "Yellow");
 
                 this.setState(ArenaState.WAITING);
 
@@ -172,18 +145,11 @@ public class Game {
         this.broadCastGame(prefix + ChatColor.GREEN + "GO!");
         this.broadCastServer(prefix + ChatColor.GREEN + "Arena " + ChatColor.GOLD + this.gameID + ChatColor.GREEN + " has started.");
 
-        this.addPlayersToTeams();
-
         this.unteamed.clear();
 
-        this.teleportPlayers();
+        this.assignPlayerSpawns();
 
-        this.objective.setDisplaySlot(DisplaySlot.SIDEBAR);
-        this.objective.setDisplayName("Team's");
-        this.redT.setScore(this.RED.getPlayers().size());
-        this.greenT.setScore(this.GREEN.getPlayers().size());
-        this.blueT.setScore(this.BLUE.getPlayers().size());
-        this.yellowT.setScore(this.YELLOW.getPlayers().size());
+        this.teleportPlayers();
 
         this.checkEnd();
 
@@ -212,39 +178,13 @@ public class Game {
 
         Bukkit.getServer().getScheduler().cancelTask(this.announcer);
 
-        if (team != null) {
-
-            if (team.equals(Game.this.RED)) {
-
-                Game.this.broadCastGame(prefix + ChatColor.GREEN + "Well done " + ChatColor.RED + "red" + ChatColor.GREEN + " team you won.");
-
-                this.notifySpectators(prefix + ChatColor.GREEN + "The " + ChatColor.RED + "red" + ChatColor.GREEN + " team has won.");
-
-            } else if (team.equals(Game.this.GREEN)) {
-
-                Game.this.broadCastGame(prefix + ChatColor.GREEN + "Well done " + ChatColor.GREEN + "green" + ChatColor.GREEN + " team you won.");
-
-                this.notifySpectators(prefix + ChatColor.GREEN + "The " + ChatColor.GREEN + "green" + ChatColor.GREEN + " team has won.");
-
-            } else if (team.equals(Game.this.BLUE)) {
-
-                Game.this.broadCastGame(prefix + ChatColor.GREEN + "Well done " + ChatColor.BLUE + "blue" + ChatColor.GREEN + " team you won.");
-
-                this.notifySpectators(prefix + ChatColor.GREEN + "The " + ChatColor.BLUE + "blue" + ChatColor.GREEN + " team has won.");
-
-            } else if (team.equals(Game.this.YELLOW)) {
-
-                Game.this.broadCastGame(prefix + ChatColor.GREEN + "Well done " + ChatColor.YELLOW + "yellow" + ChatColor.GREEN + " team you won.");
-
-                this.notifySpectators(prefix + ChatColor.GREEN + "The " + ChatColor.YELLOW + "yellow" + ChatColor.GREEN + " team has won.");
-            }
 
             try {
                 PlayerWins.setPlayerWins(players, 1);
             } catch (ClassNotFoundException | SQLException e) {
                 e.printStackTrace();
             }
-        }
+
 
         for (int x = 0; x < Game.this.players.size(); x++) {
 
@@ -368,35 +308,6 @@ public class Game {
 
     public void checkEnd() {
 
-        int red, green, yellow, blue;
-        red = this.RED.getPlayers().size();
-        green = this.GREEN.getPlayers().size();
-        yellow = this.YELLOW.getPlayers().size();
-        blue = this.BLUE.getPlayers().size();
-
-        if (red <= 0 && green <= 0 && yellow <= 0 && blue > 0) {
-
-            this.endGameNormal(this.BLUE);
-
-        } else if (red <= 0 && green <= 0 && blue <= 0 && yellow > 0) {
-
-            this.endGameNormal(this.YELLOW);
-        }
-
-        else if (red <= 0 && blue <= 0 && yellow <= 0 && green > 0) {
-
-            this.endGameNormal(this.GREEN);
-        }
-
-        else if (green <= 0 && yellow <= 0 && blue <= 0 && red > 0) {
-
-            this.endGameNormal(this.RED);
-        }
-
-        else if (green <= 0 && yellow <= 0 && blue <= 0 && yellow <= 0) {
-
-            this.endGameNormal(null);
-        }
 
     }
 
@@ -464,28 +375,6 @@ public class Game {
         gm.removePlayer(p);
         this.updateSignPlayers();
 
-        Scoreboard blankBoard = manager.getNewScoreboard();
-        p.setScoreboard(blankBoard);
-
-        if (this.getPlayerTeam(p).equals(this.RED)) {
-
-            this.redT.setScore(this.RED.getPlayers().size());
-
-        } else if (this.getPlayerTeam(p).equals(this.BLUE)) {
-
-            this.blueT.setScore(this.BLUE.getPlayers().size());
-
-        } else if (this.getPlayerTeam(p).equals(this.YELLOW)) {
-
-            this.yellowT.setScore(this.YELLOW.getPlayers().size());
-
-        } else if (this.getPlayerTeam(p).equals(this.GREEN)) {
-
-            this.greenT.setScore(this.GREEN.getPlayers().size());
-        }
-
-        this.removeFromTeam(p);
-
         updateScoreboard();
 
         InvManager.getInstance().restoreInv(p);
@@ -527,28 +416,6 @@ public class Game {
         gm.removePlayer(p);
 
         if (this.getState().equals(ArenaState.IN_GAME)) {
-
-            Scoreboard blankBoard = manager.getNewScoreboard();
-            p.setScoreboard(blankBoard);
-
-            if (this.getPlayerTeam(p).equals(this.RED)) {
-
-                this.redT.setScore(this.RED.getPlayers().size() - 1);
-
-            } else if (this.getPlayerTeam(p).equals(this.BLUE)) {
-
-                this.blueT.setScore(this.BLUE.getPlayers().size() - 1);
-
-            } else if (this.getPlayerTeam(p).equals(this.YELLOW)) {
-
-                this.yellowT.setScore(this.YELLOW.getPlayers().size() - 1);
-
-            } else if (this.getPlayerTeam(p).equals(this.GREEN)) {
-
-                this.greenT.setScore(this.GREEN.getPlayers().size() - 1);
-            }
-
-            this.removeFromTeam(p);
 
             InvManager.getInstance().restoreInv(p);
 
@@ -626,28 +493,6 @@ public class Game {
 
         if (this.getState().equals(ArenaState.IN_GAME)) {
 
-            Scoreboard blankBoard = manager.getNewScoreboard();
-            p.setScoreboard(blankBoard);
-
-            if (this.getPlayerTeam(p).equals(this.RED)) {
-
-                this.redT.setScore(this.RED.getPlayers().size() - 1);
-
-            } else if (this.getPlayerTeam(p).equals(this.BLUE)) {
-
-                this.blueT.setScore(this.BLUE.getPlayers().size() - 1);
-
-            } else if (this.getPlayerTeam(p).equals(this.YELLOW)) {
-
-                this.yellowT.setScore(this.YELLOW.getPlayers().size() - 1);
-
-            } else if (this.getPlayerTeam(p).equals(this.GREEN)) {
-
-                this.greenT.setScore(this.GREEN.getPlayers().size() - 1);
-            }
-
-            this.removeFromTeam(p);
-
             InvManager.getInstance().restoreInv(p);
 
             p.setHealth(20.00);
@@ -676,30 +521,6 @@ public class Game {
         gm.removePlayer(p);
         this.updateSignPlayers();
 
-        Scoreboard blankBoard = manager.getNewScoreboard();
-        p.setScoreboard(blankBoard);
-
-
-        if (this.getPlayerTeam(p).equals(this.RED)) {
-
-            this.redT.setScore(this.RED.getPlayers().size() - 1);
-
-        } else if (this.getPlayerTeam(p).equals(this.BLUE)) {
-
-            this.blueT.setScore(this.BLUE.getPlayers().size() - 1);
-
-        } else if (this.getPlayerTeam(p).equals(this.YELLOW)) {
-
-            this.yellowT.setScore(this.YELLOW.getPlayers().size() - 1);
-
-        } else if (this.getPlayerTeam(p).equals(this.GREEN)) {
-
-            this.greenT.setScore(this.GREEN.getPlayers().size() - 1);
-        }
-
-
-        this.removeFromTeam(p);
-
         InvManager.getInstance().restoreInv(p);
         Main.getInstance().teleportToLobby(p);
 
@@ -726,28 +547,6 @@ public class Game {
         gm.removePlayer(p);
 
         if (this.getState().equals(ArenaState.IN_GAME)) {
-
-            Scoreboard blankBoard = manager.getNewScoreboard();
-            p.setScoreboard(blankBoard);
-
-            if (this.getPlayerTeam(p).equals(this.RED)) {
-
-                this.redT.setScore(this.RED.getPlayers().size() - 1);
-
-            } else if (this.getPlayerTeam(p).equals(this.BLUE)) {
-
-                this.blueT.setScore(this.BLUE.getPlayers().size() - 1);
-
-            } else if (this.getPlayerTeam(p).equals(this.YELLOW)) {
-
-                this.yellowT.setScore(this.YELLOW.getPlayers().size() - 1);
-
-            } else if (this.getPlayerTeam(p).equals(this.GREEN)) {
-
-                this.greenT.setScore(this.GREEN.getPlayers().size() - 1);
-            }
-
-            this.removeFromTeam(p);
 
             InvManager.getInstance().restoreInv(p);
 
@@ -788,50 +587,6 @@ public class Game {
         return false;
     }
 
-    public Team getPlayerTeam(Player p) {
-
-        Team team = this.team.get(p.getName());
-
-        if (team == null) {
-
-            return null;
-        }
-
-        if (team.equals(this.RED)) {
-
-            return this.RED;
-
-        } else if (team.equals(this.GREEN)) {
-
-            return this.GREEN;
-
-        } else if (team.equals(this.BLUE)) {
-
-            return this.BLUE;
-
-        } else if (team.equals(this.YELLOW)) {
-
-            return this.YELLOW;
-
-        } else {
-
-            return null;
-        }
-
-    }
-
-    public boolean isPlayerInTeam(Player p) {
-
-        if (this.team.containsKey(p.getName())) {
-
-            if (this.team.get(p.getName()) != null) {
-
-                return true;
-            }
-        }
-        return false;
-    }
-
     public List<String> getEditors() {
 
         return editors;
@@ -852,63 +607,6 @@ public class Game {
         if (editors.contains(p.getName())) {
 
             editors.remove(p.getName());
-        }
-    }
-
-    public Team getYellowTeam() {
-
-        return this.YELLOW;
-    }
-
-    public Team getGreenTeam() {
-
-        return this.GREEN;
-    }
-
-    public Team getBlueTeam() {
-
-        return this.BLUE;
-    }
-
-    public Team getRedTeam() {
-
-        return this.RED;
-    }
-
-    public void setTeamRed(Player p) {
-
-        this.removeFromTeam(p);
-        this.team.put(p.getName(), this.RED);
-        this.RED.addPlayer(p);
-    }
-
-    public void setTeamBlue(Player p) {
-
-        this.removeFromTeam(p);
-        this.team.put(p.getName(), this.BLUE);
-        this.RED.addPlayer(p);
-    }
-
-    public void setTeamGreen(Player p) {
-
-        this.removeFromTeam(p);
-        this.team.put(p.getName(), this.GREEN);
-        this.RED.addPlayer(p);
-    }
-
-    public void setTeamYellow(Player p) {
-
-        this.removeFromTeam(p);
-        this.team.put(p.getName(), this.YELLOW);
-        this.RED.addPlayer(p);
-    }
-
-    public void removeFromTeam(Player p) {
-
-        if (this.team.containsKey(p.getName())) {
-
-            this.team.get(p.getName()).removePlayer(p);
-            this.team.remove(p.getName());
         }
     }
 
@@ -950,32 +648,8 @@ public class Game {
         for (int x = 0; x < this.getPlayers().size(); x++) {
 
             Player p = Bukkit.getServer().getPlayer(this.getPlayers().get(x));
-            if (p != null) {
 
-
-                Team team = this.getPlayerTeam(p);
-
-                if (team == null) {
-
-                    playersColor.add(ChatColor.GRAY + p.getDisplayName());
-
-                } else if (team.equals(this.RED)) {
-
-                    playersColor.add(ChatColor.RED + p.getDisplayName());
-
-                } else if (team.equals(this.GREEN)) {
-
-                    playersColor.add(ChatColor.GREEN + p.getDisplayName());
-
-                } else if (team.equals(this.BLUE)) {
-
-                    playersColor.add(ChatColor.BLUE + p.getDisplayName());
-
-                } else if (team.equals(this.YELLOW)) {
-
-                    playersColor.add(ChatColor.YELLOW + p.getDisplayName());
-                }
-            }
+               playersColor.add(p.getDisplayName());
         }
 
         return this.getPlayers().toString().replace("[", " ").replace("]", " ");
@@ -1042,45 +716,31 @@ public class Game {
 
     }
 
-    public void addRedSpawn(Player p) {
+    public void addSpawn(Player p) {
 
-        Main.getInstance().Spawns.set("Spawn." + this.gameID + ".Red.X", p.getLocation().getBlockX());
-        Main.getInstance().Spawns.set("Spawn." + this.gameID + ".Red.Y", p.getLocation().getBlockY());
-        Main.getInstance().Spawns.set("Spawn." + this.gameID + ".Red.Z", p.getLocation().getBlockZ());
-        Main.getInstance().Spawns.set("Spawn." + this.gameID + ".Red.YAW", p.getLocation().getYaw());
-        Main.getInstance().Spawns.set("Spawn." + this.gameID + ".Red.PITCH", p.getLocation().getPitch());
+        int amount = Main.getInstance().Spawns.getInt("Spawn." + this.gameID + ".Amount") + 1;
+        Main.getInstance().Spawns.set("Spawn." + this.gameID + ".Amount", amount);
+
+        Main.getInstance().Spawns.set("Spawn." + this.gameID + "." + amount + ".X", p.getLocation().getBlockX());
+        Main.getInstance().Spawns.set("Spawn." + this.gameID + "." + amount + ".Y", p.getLocation().getBlockY());
+        Main.getInstance().Spawns.set("Spawn." + this.gameID + "." + amount + ".Z", p.getLocation().getBlockZ());
+        Main.getInstance().Spawns.set("Spawn." + this.gameID + "." + amount + ".PITCH", p.getLocation().getPitch());
+        Main.getInstance().Spawns.set("Spawn." + this.gameID + "." + amount + ".YAW", p.getLocation().getYaw());
 
         ConfigManager.getInstance().saveYamls();
     }
 
-    public void addBlueSpawn(Player p) {
+    public void removeSpawn(int id) {
+        Main.getInstance().Spawns.set("Spawn." + this.gameID + "." + id + ".YAW", null);
 
-        Main.getInstance().Spawns.set("Spawn." + this.gameID + ".Blue.X", p.getLocation().getBlockX());
-        Main.getInstance().Spawns.set("Spawn." + this.gameID + ".Blue.Y", p.getLocation().getBlockY());
-        Main.getInstance().Spawns.set("Spawn." + this.gameID + ".Blue.Z", p.getLocation().getBlockZ());
-        Main.getInstance().Spawns.set("Spawn." + this.gameID + ".Blue.YAW", p.getLocation().getYaw());
-        Main.getInstance().Spawns.set("Spawn." + this.gameID + ".Blue.PITCH", p.getLocation().getPitch());
         ConfigManager.getInstance().saveYamls();
     }
 
-    public void addYellowSpawn(Player p) {
-
-        Main.getInstance().Spawns.set("Spawn." + this.gameID + ".Yellow.X", p.getLocation().getBlockX());
-        Main.getInstance().Spawns.set("Spawn." + this.gameID + ".Yellow.Y", p.getLocation().getBlockY());
-        Main.getInstance().Spawns.set("Spawn." + this.gameID + ".Yellow.Z", p.getLocation().getBlockZ());
-        Main.getInstance().Spawns.set("Spawn." + this.gameID + ".Yellow.YAW", p.getLocation().getYaw());
-        Main.getInstance().Spawns.set("Spawn." + this.gameID + ".Yellow.PITCH", p.getLocation().getPitch());
-        ConfigManager.getInstance().saveYamls();
-    }
-
-    public void addGreenSpawn(Player p) {
-
-        Main.getInstance().Spawns.set("Spawn." + this.gameID + ".Green.X", p.getLocation().getBlockX());
-        Main.getInstance().Spawns.set("Spawn." + this.gameID + ".Green.Y", p.getLocation().getBlockY());
-        Main.getInstance().Spawns.set("Spawn." + this.gameID + ".Green.Z", p.getLocation().getBlockZ());
-        Main.getInstance().Spawns.set("Spawn." + this.gameID + ".Green.YAW", p.getLocation().getYaw());
-        Main.getInstance().Spawns.set("Spawn." + this.gameID + ".Green.PITCH", p.getLocation().getPitch());
-        ConfigManager.getInstance().saveYamls();
+    public boolean isSpawn(int id){
+        if(Main.getInstance().Spawns.contains("Spawn." + this.gameID + "." + id)){
+            return true;
+        }
+        return false;
     }
 
     public void addSpectatorSpawn(Player p) {
@@ -1091,50 +751,6 @@ public class Game {
         Main.getInstance().Spawns.set("Spawn." + this.gameID + ".Spectator.YAW", p.getLocation().getYaw());
         Main.getInstance().Spawns.set("Spawn." + this.gameID + ".Spectator.PITCH", p.getLocation().getPitch());
         ConfigManager.getInstance().saveYamls();
-    }
-
-    public Location getSpawnRed() {
-
-        double x = Main.getInstance().Spawns.getInt("Spawn." + this.gameID + ".Red.X");
-        double y = Main.getInstance().Spawns.getInt("Spawn." + this.gameID + ".Red.Y");
-        double z = Main.getInstance().Spawns.getInt("Spawn." + this.gameID + ".Red.Z");
-        long yaw = Main.getInstance().Spawns.getInt("Spawn." + this.gameID + ".Red.YAW");
-        long pitch = Main.getInstance().Spawns.getInt("Spawn." + this.gameID + ".Red.PITCH");
-
-        return new Location(this.world, x, y + 1, z, yaw, pitch);
-    }
-
-    public Location getSpawnBlue() {
-
-        double x = Main.getInstance().Spawns.getInt("Spawn." + this.gameID + ".Blue.X");
-        double y = Main.getInstance().Spawns.getInt("Spawn." + this.gameID + ".Blue.Y");
-        double z = Main.getInstance().Spawns.getInt("Spawn." + this.gameID + ".Blue.Z");
-        long yaw = Main.getInstance().Spawns.getInt("Spawn." + this.gameID + ".Blue.YAW");
-        long pitch = Main.getInstance().Spawns.getInt("Spawn." + this.gameID + ".Blue.PITCH");
-
-        return new Location(this.world, x, y + 1, z, yaw, pitch);
-    }
-
-    public Location getSpawnYellow() {
-
-        double x = Main.getInstance().Spawns.getInt("Spawn." + this.gameID + ".Yellow.X");
-        double y = Main.getInstance().Spawns.getInt("Spawn." + this.gameID + ".Yellow.Y");
-        double z = Main.getInstance().Spawns.getInt("Spawn." + this.gameID + ".Yellow.Z");
-        long yaw = Main.getInstance().Spawns.getInt("Spawn." + this.gameID + ".Yellow.YAW");
-        long pitch = Main.getInstance().Spawns.getInt("Spawn." + this.gameID + ".Yellow.PITCH");
-
-        return new Location(this.world, x, y + 1, z, yaw, pitch);
-    }
-
-    public Location getSpawnGreen() {
-
-        double x = Main.getInstance().Spawns.getInt("Spawn." + this.gameID + ".Green.X");
-        double y = Main.getInstance().Spawns.getInt("Spawn." + this.gameID + ".Green.Y");
-        double z = Main.getInstance().Spawns.getInt("Spawn." + this.gameID + ".Green.Z");
-        long yaw = Main.getInstance().Spawns.getInt("Spawn." + this.gameID + ".Green.YAW");
-        long pitch = Main.getInstance().Spawns.getInt("Spawn." + this.gameID + ".Green.PITCH");
-
-        return new Location(this.world, x, y + 1, z, yaw, pitch);
     }
 
     public Location getSpawnSpectator() {
@@ -1148,30 +764,6 @@ public class Game {
         return new Location(this.world, x, y + 1, z, yaw, pitch);
     }
 
-    public void removeRedSpawn() {
-
-        Main.getInstance().Spawns.set("Spawn.Red", null);
-
-    }
-
-    public void removeBlueSpawn() {
-
-        Main.getInstance().Spawns.set("Spawn.Blue", null);
-
-    }
-
-    public void removeGreenSpawn() {
-
-        Main.getInstance().Spawns.set("Spawn.Green", null);
-
-    }
-
-    public void removeYellowSpawn() {
-
-        Main.getInstance().Spawns.set("Spawn.Yellow", null);
-
-    }
-
     public void removeSpectatorSpawn() {
 
         Main.getInstance().Spawns.set("Spawn.Spectator", null);
@@ -1182,532 +774,53 @@ public class Game {
         return this.unteamed;
     }
 
-    public void checkTeamEliminated() {
-
-        if (this.RED.getPlayers().size() <= 0) {
-
-            this.broadCastGame(prefix + ChatColor.GREEN + "The " + ChatColor.RED + "red " + ChatColor.GREEN + "team has been eliminated.");
-        }
-
-        if (this.BLUE.getPlayers().size() <= 0) {
-
-            this.broadCastGame(prefix + ChatColor.GREEN + "The " + ChatColor.BLUE + "blue " + ChatColor.GREEN + "team has been eliminated.");
-        }
-
-        if (this.YELLOW.getPlayers().size() <= 0) {
-
-            this.broadCastGame(prefix + ChatColor.GREEN + "The " + ChatColor.YELLOW + "yellow " + ChatColor.GREEN + "team has been eliminated.");
-        }
-
-        if (this.GREEN.getPlayers().size() <= 0) {
-
-            this.broadCastGame(prefix + ChatColor.GREEN + "The " + ChatColor.GREEN + "green " + ChatColor.GREEN + "team has been eliminated.");
-        }
+    public int getSpawnAmount() {
+        return Main.getInstance().Spawns.getInt("Spawn." + this.gameID + ".Amount");
     }
 
-    public void addPlayersToTeams() {
+    public void assignPlayerSpawns(){
 
-        for (int y = 0; y < unteamed.size(); y++) {
+        int count = 1;
 
-            Team team = null;
+        for(String s : this.players) {
 
-            int red = this.RED.getPlayers().size();
-            int blue = this.BLUE.getPlayers().size();
-            int yellow = this.YELLOW.getPlayers().size();
-            int green = this.GREEN.getPlayers().size();
+            if(count < this.getSpawnAmount()){
 
-            if (red < blue && red < yellow && red < green) {
-                team = this.RED;
+                Location loc = new Location(this.world, Main.getInstance().Spawns.getDouble("Spawn." + this.gameID + "." + count + ".X"), Main.getInstance().Spawns.getDouble("Spawn." + this.gameID + "." + count + ".Y"), Main.getInstance().Spawns.getDouble("Spawn." + this.gameID + "." + count + ".Z"), Main.getInstance().Spawns.getLong("Spawn." + this.gameID + "." + count + ".YAW"), Main.getInstance().Spawns.getLong("Spawn." + this.gameID + "." + count + ".PITCH"));
+
+                spawnsID.put(s, count);
+                spawns.put(s, loc);
+
+                count++;
             }
-
-            else if (blue < red && blue < yellow && blue < green) {
-                team = this.BLUE;
-            }
-
-            else if (yellow < blue && yellow < red && yellow < green) {
-                team = this.YELLOW;
-            }
-
-            else if (green < red && green < yellow && green < blue) {
-                team = this.GREEN;
-            }
-
-            else if (red == blue && red == green && red == yellow) {
-                team = chooseTeam();
-            }
-
-            else if (red == blue && red < green && red < yellow) {
-
-                Random r = new Random();
-                int x = r.nextInt(1);
-
-                if (x == 1) {
-                    team = this.BLUE;
-                }
-                team = this.RED;
-            }
-
-            else if (red == green && red < blue && red < yellow) {
-
-                Random r = new Random();
-                int x = r.nextInt(1);
-
-                if (x == 1) {
-                    team = this.GREEN;
-                }
-                team = this.RED;
-            }
-
-            else if (red == yellow && red < blue && red < green) {
-
-                Random r = new Random();
-                int x = r.nextInt(1);
-
-                if (x == 1) {
-                    team = this.YELLOW;
-                }
-                team = this.RED;
-            }
-
-            else if (blue == green && blue < red && blue < yellow) {
-
-                Random r = new Random();
-                int x = r.nextInt(1);
-
-                if (x == 1) {
-                    team = this.BLUE;
-                }
-                team = this.GREEN;
-            }
-
-            else if (blue == yellow && blue < red && blue < green) {
-
-                Random r = new Random();
-                int x = r.nextInt(1);
-
-                if (x == 1) {
-                    team = this.BLUE;
-                }
-                team = this.YELLOW;
-            }
-
-            else if (yellow == green && yellow < red && yellow < blue) {
-
-                Random r = new Random();
-                int x = r.nextInt(1);
-
-                if (x == 1) {
-                    team = this.YELLOW;
-                }
-                team = this.GREEN;
-            }
-
-            else if (blue == green && green == red && red < yellow) {
-
-                Random r = new Random();
-                int x = r.nextInt(2);
-
-                if (x == 0) {
-                    team = this.GREEN;
-                } else if (x == 1) {
-                    team = this.RED;
-                } else if (x == 2) {
-                    team = this.BLUE;
-                }
-            }
-
-            else if (blue == green && green == yellow && yellow < red) {
-
-                Random r = new Random();
-                int x = r.nextInt(2);
-
-                if (x == 0) {
-                    team = this.YELLOW;
-                } else if (x == 1) {
-                    team = this.GREEN;
-                } else if (x == 2) {
-                    team = this.BLUE;
-                }
-            }
-
-            else if (blue == red && red == yellow && yellow < green) {
-
-                Random r = new Random();
-                int x = r.nextInt(2);
-
-                if (x == 0) {
-                    team = this.YELLOW;
-                } else if (x == 1) {
-                    team = this.RED;
-                } else if (x == 2) {
-                    team = this.BLUE;
-                }
-            }
-
-            else if (green == red && red == yellow && yellow < blue) {
-
-                Random r = new Random();
-                int x = r.nextInt(2);
-
-                if (x == 0) {
-                    team = this.YELLOW;
-                } else if (x == 1) {
-                    team = this.RED;
-                } else if (x == 2) {
-                    team = this.GREEN;
-                }
-            }
-
-            Player p = Bukkit.getServer().getPlayer(unteamed.get(y));
-            team.addPlayer(p);
-
-            this.team.put(p.getName(), team);
-
-            if (team.equals(this.RED)) {
-
-                p.sendMessage(prefix + ChatColor.GREEN + "You have joined the " + ChatColor.RED + "red " + ChatColor.GREEN + " team.");
-
-            } else if (team.equals(this.GREEN)) {
-
-                p.sendMessage(prefix + ChatColor.GREEN + "You have joined the " + ChatColor.DARK_GREEN + "green" + ChatColor.GREEN + " team.");
-
-            } else if (team.equals(this.BLUE)) {
-
-                p.sendMessage(prefix + ChatColor.GREEN + "You have joined the " + ChatColor.BLUE + "blue " + ChatColor.GREEN + " team.");
-
-            } else if (team.equals(this.YELLOW)) {
-
-                p.sendMessage(prefix + ChatColor.GREEN + "You have joined the " + ChatColor.YELLOW + "yellow " + ChatColor.GREEN + " team.");
-
-            }
-
-            InvManager.getInstance().saveInv(p);
-
-            p.setScoreboard(this.board);
-        }
-    }
-
-    public Team chooseTeam() {
-
-        Random r = new Random();
-
-        int x = r.nextInt(4) + 1;
-
-        Team team = null;
-
-        switch (x) {
-
-        case 1:
-            team = this.RED;
-            break;
-        case 2:
-            team = this.GREEN;
-            break;
-        case 3:
-            team = this.YELLOW;
-            break;
-        case 4:
-            team = this.BLUE;
-            break;
-        }
-        return team;
-    }
-
-    public boolean isRedAvailable() {
-
-        int red = this.RED.getPlayers().size();
-        int blue = this.BLUE.getPlayers().size();
-        int yellow = this.YELLOW.getPlayers().size();
-        int green = this.GREEN.getPlayers().size();
-
-        if (red >= Main.getInstance().Config.getInt("Max-People-In-A-Team")) {
-            return false;
-        }
-
-        if (red < blue && red < yellow && red < green) {
-            return true;
-        }
-
-        else if (red == blue && red == green && red == yellow) {
-            return true;
-        }
-
-        else if (red == blue && red < green && red < yellow) {
-            return true;
-        }
-
-        else if (red == green && red < blue && red < yellow) {
-            return true;
-        }
-
-        else if (red == yellow && red < blue && red < green) {
-            return true;
-        }
-
-        else if (blue == green && green == red && red < yellow) {
-            return true;
-        }
-
-        else if (blue == red && red == yellow && yellow < green) {
-            return true;
-        }
-
-        else if (green == red && red == yellow && yellow < blue) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    public boolean isGreenAvailable() {
-
-        int red = this.RED.getPlayers().size();
-        int blue = this.BLUE.getPlayers().size();
-        int yellow = this.YELLOW.getPlayers().size();
-        int green = this.GREEN.getPlayers().size();
-
-        if (green >= Main.getInstance().Config.getInt("Max-People-In-A-Team")) {
-            return false;
-        }
-
-        if (green < blue && green < yellow && green < red) {
-            return true;
-        }
-
-        else if (green == blue && green == red && green == yellow) {
-            return true;
-        }
-
-        else if (green == blue && green < red && green < yellow) {
-            return true;
-        }
-
-        else if (green == red && green < blue && green < yellow) {
-            return true;
-        }
-
-        else if (green == yellow && green < blue && green < red) {
-            return true;
-        }
-
-        else if (blue == green && green == red && red < yellow) {
-            return true;
-        }
-
-        else if (blue == green && green == yellow && yellow < red) {
-            return true;
-        }
-
-        else if (green == red && red == yellow && yellow < blue) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    public boolean isBlueAvailable() {
-
-        int red = this.RED.getPlayers().size();
-        int blue = this.BLUE.getPlayers().size();
-        int yellow = this.YELLOW.getPlayers().size();
-        int green = this.GREEN.getPlayers().size();
-
-        if (blue >= Main.getInstance().Config.getInt("Max-People-In-A-Team")) {
-            return false;
-        }
-
-        if (blue < green && blue < yellow && blue < red) {
-            return true;
-        }
-
-        else if (blue == green && blue == red && blue == yellow) {
-            return true;
-        }
-
-        else if (blue == green && blue < red && blue < yellow) {
-            return true;
-        }
-
-        else if (blue == red && blue < green && blue < yellow) {
-            return true;
-        }
-
-        else if (blue == yellow && blue < green && blue < red) {
-            return true;
-        }
-
-        else if (blue == green && green == red && red < yellow) {
-            return true;
-        }
-
-        else if (blue == green && green == yellow && yellow < red) {
-            return true;
-        }
-
-        else if (blue == red && red == yellow && yellow < green) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    public boolean isYellowAvailable() {
-
-        int red = this.RED.getPlayers().size();
-        int blue = this.BLUE.getPlayers().size();
-        int yellow = this.YELLOW.getPlayers().size();
-        int green = this.GREEN.getPlayers().size();
-
-        if (yellow >= Main.getInstance().Config.getInt("Max-People-In-A-Team")) {
-            return false;
-        }
-
-        if (yellow < green && yellow < blue && yellow < red) {
-            return true;
-        }
-
-        else if (yellow == green && yellow == red && yellow == blue) {
-            return true;
-        }
-
-        else if (yellow == green && yellow < red && yellow < blue) {
-            return true;
-        }
-
-        else if (yellow == red && yellow < green && yellow < blue) {
-            return true;
-        }
-
-        else if (yellow == blue && yellow < green && yellow < red) {
-            return true;
-        }
-
-        else if (yellow == green && green == red && red < yellow) {
-            return true;
-        }
-
-        else if (yellow == red && red == blue && yellow < green) {
-            return true;
-        }
-
-        else if (yellow == blue && blue == green && yellow < red) {
-            return true;
-        } else {
-            return false;
         }
     }
 
     public void teleportPlayers() {
 
-        Location red = this.getSpawnRed();
-        Location green = this.getSpawnGreen();
-        Location blue = this.getSpawnBlue();
-        Location yellow = this.getSpawnYellow();
+        for (String ps : this.players) {
 
-        for (OfflinePlayer p : this.RED.getPlayers()) {
+            Player p = Bukkit.getServer().getPlayer(ps);
 
-            p.getPlayer().teleport(red);
+            InvManager.getInstance().saveInv(p);
 
-            Wool wool = new Wool(DyeColor.RED);
+            p.teleport(spawns.get(p.getName()));
 
-            p.getPlayer().getInventory().setHelmet(wool.toItemStack(1));
-
-            if (!p.getPlayer().getGameMode().equals(GameMode.SURVIVAL)) {
+            if (!p.getGameMode().equals(GameMode.SURVIVAL)) {
 
                 this.saveGM.put(p.getName(), p.getPlayer().getGameMode());
             }
 
-            p.getPlayer().setGameMode(GameMode.SURVIVAL);
-            p.getPlayer().setHealth(20.00);
-            p.getPlayer().setFoodLevel(20);
-            p.getPlayer().setFireTicks(0);
-            p.getPlayer().setSaturation(10);
-            p.getPlayer().getActivePotionEffects().clear();
+            p.setGameMode(GameMode.SURVIVAL);
+            p.setHealth(20.00);
+            p.setFoodLevel(20);
+            p.setFireTicks(0);
+            p.setSaturation(10);
+            p.getActivePotionEffects().clear();
 
             try {
-                CreatePlayer.enterNewUser(p.getPlayer());
-                PlayerPlayed.setPlayerPlayed(p.getPlayer(), 1);
-            } catch (ClassNotFoundException | SQLException e) {
-                e.printStackTrace();
-            }
-        }
-
-        for (OfflinePlayer p : this.GREEN.getPlayers()) {
-
-            p.getPlayer().teleport(green);
-
-            Wool wool = new Wool(DyeColor.GREEN);
-
-            p.getPlayer().getInventory().setHelmet(wool.toItemStack(1));
-
-            if (!p.getPlayer().getGameMode().equals(GameMode.SURVIVAL)) {
-                this.saveGM.put(p.getName(), p.getPlayer().getGameMode());
-            }
-
-            p.getPlayer().setGameMode(GameMode.SURVIVAL);
-            p.getPlayer().setHealth(20.00);
-            p.getPlayer().setFoodLevel(20);
-            p.getPlayer().setFireTicks(0);
-            p.getPlayer().setSaturation(10);
-            p.getPlayer().getActivePotionEffects().clear();
-
-            try {
-                CreatePlayer.enterNewUser(p.getPlayer());
-                PlayerPlayed.setPlayerPlayed(p.getPlayer(), 1);
-            } catch (ClassNotFoundException | SQLException e) {
-                e.printStackTrace();
-            }
-        }
-
-        for (OfflinePlayer p : this.BLUE.getPlayers()) {
-
-            p.getPlayer().teleport(blue);
-
-            Wool wool = new Wool(DyeColor.BLUE);
-
-            p.getPlayer().getInventory().setHelmet(wool.toItemStack(1));
-
-            if (!p.getPlayer().getGameMode().equals(GameMode.SURVIVAL)) {
-                this.saveGM.put(p.getName(), p.getPlayer().getGameMode());
-            }
-
-            p.getPlayer().setGameMode(GameMode.SURVIVAL);
-            p.getPlayer().setHealth(20.00);
-            p.getPlayer().setFoodLevel(20);
-            p.getPlayer().setFireTicks(0);
-            p.getPlayer().setSaturation(10);
-            p.getPlayer().getActivePotionEffects().clear();
-
-            try {
-                CreatePlayer.enterNewUser(p.getPlayer());
-                PlayerPlayed.setPlayerPlayed(p.getPlayer(), 1);
-            } catch (ClassNotFoundException | SQLException e) {
-                e.printStackTrace();
-            }
-        }
-
-        for (OfflinePlayer p : this.YELLOW.getPlayers()) {
-
-            p.getPlayer().teleport(yellow);
-
-            Wool wool = new Wool(DyeColor.YELLOW);
-
-            p.getPlayer().getInventory().setHelmet(wool.toItemStack(1));
-
-            if (!p.getPlayer().getGameMode().equals(GameMode.SURVIVAL)) {
-                this.saveGM.put(p.getName(), p.getPlayer().getGameMode());
-            }
-
-            p.getPlayer().setGameMode(GameMode.SURVIVAL);
-            p.getPlayer().setHealth(20.00);
-            p.getPlayer().setFoodLevel(20);
-            p.getPlayer().setFireTicks(0);
-            p.getPlayer().setSaturation(10);
-            p.getPlayer().getActivePotionEffects().clear();
-
-            try {
-                CreatePlayer.enterNewUser(p.getPlayer());
-                PlayerPlayed.setPlayerPlayed(p.getPlayer(), 1);
+                CreatePlayer.enterNewUser(p);
+                PlayerPlayed.setPlayerPlayed(p, 1);
             } catch (ClassNotFoundException | SQLException e) {
                 e.printStackTrace();
             }
@@ -1917,7 +1030,7 @@ public class Game {
         }
     }
 
-    public void loadChunk(){
+    public void loadChunk() {
         List<String> signs = Main.getInstance().Signs.getStringList("Signs." + this.gameID);
 
         for (int x = 0; x < signs.size(); x++) {
@@ -2130,13 +1243,13 @@ public class Game {
         }
     }
 
-    public void build(){
+    public void build() {
 
         try {
 
-            if(!RegenArena.getBlocksPlaced(this.gameID).isEmpty()){
+            if (!RegenArena.getBlocksPlaced(this.gameID).isEmpty()) {
 
-                for(int x = 0; x < RegenArena.getBlocksPlaced(this.gameID).size(); x++){
+                for (int x = 0; x < RegenArena.getBlocksPlaced(this.gameID).size(); x++) {
 
                     List<BlockLocation> blocks = RegenArena.getBlocksPlaced(this.gameID);
 
@@ -2146,9 +1259,9 @@ public class Game {
                 }
             }
 
-            if(!RegenArena.getBlocksBroken(this.gameID).isEmpty()){
+            if (!RegenArena.getBlocksBroken(this.gameID).isEmpty()) {
 
-                for(int x = 0; x < RegenArena.getBlocksBroken(this.gameID).size(); x++){
+                for (int x = 0; x < RegenArena.getBlocksBroken(this.gameID).size(); x++) {
 
                     List<BlockLocation> blocks = RegenArena.getBlocksBroken(this.gameID);
 

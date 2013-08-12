@@ -105,14 +105,6 @@ public class Main extends JavaPlugin {
         pm.registerEvents(new BlockPlace(), this);
         pm.registerEvents(new InventoryEvent(), this);
         pm.registerEvents(new Command(), this);
-   /*   pm.registerEvents(new BlockBurn(), this);
-        pm.registerEvents(new BlockForm(), this);
-        pm.registerEvents(new BlockGrow(), this);
-        pm.registerEvents(new BlockPhysics(), this);
-        pm.registerEvents(new BlockSpread(), this);
-        pm.registerEvents(new LeavesDecay(), this);
-        pm.registerEvents(new PistonExtend(), this);
-        pm.registerEvents(new PistonRetract(), this);*/
 
         getCommand("skyblockw").setExecutor(new SW());
 

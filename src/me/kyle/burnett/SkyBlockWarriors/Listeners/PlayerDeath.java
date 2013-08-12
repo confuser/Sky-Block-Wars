@@ -44,7 +44,7 @@ public class PlayerDeath implements Listener {
 
                             ((CraftPlayer) p).getHandle().playerConnection.a(packet);
 
-                            p.sendMessage(ChatColor.GOLD + "[" + ChatColor.BLUE + "SB" + ChatColor.GOLD + "] " + ChatColor.RED + "You were killed by " + ChatColor.GOLD + e.getEntity().getLastDamageCause() + ChatColor.RED + ".");
+                            p.sendMessage(ChatColor.GOLD + "[" + ChatColor.BLUE + "SBW" + ChatColor.GOLD + "] " + ChatColor.RED + "You were killed by " + ChatColor.GOLD + e.getEntity().getLastDamageCause() + ChatColor.RED + ".");
 
                             GameManager.getInstance().getPlayerGame(p).removeFromGameDied(p);
 
