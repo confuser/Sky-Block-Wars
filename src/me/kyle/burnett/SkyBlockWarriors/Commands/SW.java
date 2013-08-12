@@ -1148,7 +1148,7 @@ public class SW implements CommandExecutor {
 
                                 p.sendMessage(ChatColor.GOLD + "----------" + ChatColor.GREEN + "Sky Block War's Admin Help" + ChatColor.GOLD + "----------");
                                 p.sendMessage(ChatColor.GOLD + "/sw setlobby - " + ChatColor.BLUE + "Set the lobby where player's get teleported to.");
-                                p.sendMessage(ChatColor.GOLD + "/sw setwaiting - " + ChatColor.BLUE + "Set the waiting lobby where player's get teleported to after they join.");
+                                p.sendMessage(ChatColor.GOLD + "/sw setwaiting <arena> - " + ChatColor.BLUE + "Set the waiting lobby where player's get teleported to after they join.");
                                 p.sendMessage(ChatColor.GOLD + "/sw prepare <arena> - " + ChatColor.BLUE + "Completely restart the arena disregarding what state its in.");
                                 p.sendMessage(ChatColor.GOLD + "/sw enable <arena> - " + ChatColor.BLUE + "Enable an arena for editing.");
                                 p.sendMessage(ChatColor.GOLD + "/sw disable <arena> - " + ChatColor.BLUE + "Disable an arena. Will not show up in '/sw listgames'.");
