@@ -620,11 +620,11 @@ public class SW implements CommandExecutor {
 
                                             if (game.getState().equals(ArenaState.WAITING) || game.getState().equals(ArenaState.STARTING)) {
 
-                                                if (game.getPlayers().size() != Main.getInstance().Config.getInt("Max-People-In-A-Team") * 4) {
+                                                if (game.getPlayers().size() < game.getSpawnAmount()) {
 
                                                     game.addPlayer(p);
 
-                                                } else if (game.getPlayers().size() == Main.getInstance().Config.getInt("Max-People-In-A-Team") * 4) {
+                                                } else if (game.getPlayers().size() >= game.getSpawnAmount()) {
 
                                                     p.sendMessage(prefix + ChatColor.RED + "That arena is full.");
                                                 }
