@@ -63,7 +63,6 @@ public class SW implements CommandExecutor {
                         p.sendMessage(ChatColor.GOLD + "/sw spectate [arena] - " + ChatColor.BLUE + "Specate a specific arena.");
                         p.sendMessage(ChatColor.GOLD + "/sw list - " + ChatColor.BLUE + "List players in your current game.");
                         p.sendMessage(ChatColor.GOLD + "/sw listgames -  " + ChatColor.BLUE + "List all available games.");
-                        p.sendMessage(ChatColor.GOLD + "/sw team " + teams + " -  " + ChatColor.BLUE + "Choose a team once you join a game.");
                         p.sendMessage(ChatColor.GOLD + "/sw vote -  " + ChatColor.BLUE + "Vote to start the game.");
                         p.sendMessage(ChatColor.GOLD + "/sw leader {Kills, Deaths, Wins, Losses, Played} - " + ChatColor.BLUE + "Shows leaderboards for selected category.");
                         p.sendMessage(ChatColor.GOLD + "/sw stats {player} - " + ChatColor.BLUE + "Gives more indepth stats for specified player.");
@@ -620,11 +619,11 @@ public class SW implements CommandExecutor {
 
                                             if (game.getState().equals(ArenaState.WAITING) || game.getState().equals(ArenaState.STARTING)) {
 
-                                                if (game.getPlayers().size() != Main.getInstance().Config.getInt("Max-People-In-A-Team") * 4) {
+                                                if (game.getPlayers().size() < game.getSpawnAmount()) {
 
                                                     game.addPlayer(p);
 
-                                                } else if (game.getPlayers().size() == Main.getInstance().Config.getInt("Max-People-In-A-Team") * 4) {
+                                                } else if (game.getPlayers().size() >= game.getSpawnAmount()) {
 
                                                     p.sendMessage(prefix + ChatColor.RED + "That arena is full.");
                                                 }
@@ -1132,8 +1131,8 @@ public class SW implements CommandExecutor {
                                 p.sendMessage(ChatColor.GOLD + "/sw create [arena] - " + ChatColor.BLUE + "Create's a new arena or overrides a previous arena if specified.");
                                 p.sendMessage(ChatColor.GOLD + "/sw confirm - " + ChatColor.BLUE + "Confirm an override action.");
                                 p.sendMessage(ChatColor.GOLD + "/sw edit <arena> - " + ChatColor.BLUE + "Enter edit mode of an arena");
-                                p.sendMessage(ChatColor.GOLD + "/sw setspawn " + teams + " - " + ChatColor.BLUE + "Set the spawns for each team.");
-                                p.sendMessage(ChatColor.GOLD + "/sw removespawn " + teams + " - " + ChatColor.BLUE + "Remove the spawn for a team.");
+                                p.sendMessage(ChatColor.GOLD + "/sw setspawn - " + ChatColor.BLUE + "Set the spawns for each team.");
+                                p.sendMessage(ChatColor.GOLD + "/sw removespawn <spawn>" + " - " + ChatColor.BLUE + "Remove the spawn for a team.");
                                 p.sendMessage(ChatColor.GOLD + "/sw addchest <spawn/side/center> - " + ChatColor.BLUE + "Add the location and type of the arena chests.");
                                 p.sendMessage(ChatColor.GOLD + "/sw removechest - " + ChatColor.BLUE + "Removes the current chest of your selection.");
 

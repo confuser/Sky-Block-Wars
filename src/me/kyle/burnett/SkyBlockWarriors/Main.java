@@ -15,7 +15,6 @@ import me.kyle.burnett.SkyBlockWarriors.Listeners.BlockBreak;
 import me.kyle.burnett.SkyBlockWarriors.Listeners.BlockPlace;
 import me.kyle.burnett.SkyBlockWarriors.Listeners.Command;
 import me.kyle.burnett.SkyBlockWarriors.Listeners.Interact;
-import me.kyle.burnett.SkyBlockWarriors.Listeners.InventoryEvent;
 import me.kyle.burnett.SkyBlockWarriors.Listeners.PlayerDamageEvent;
 import me.kyle.burnett.SkyBlockWarriors.Listeners.PlayerDeath;
 import me.kyle.burnett.SkyBlockWarriors.Listeners.PlayerLeave;
@@ -103,7 +102,6 @@ public class Main extends JavaPlugin {
         pm.registerEvents(new Interact(), this);
         pm.registerEvents(new BlockBreak(), this);
         pm.registerEvents(new BlockPlace(), this);
-        pm.registerEvents(new InventoryEvent(), this);
         pm.registerEvents(new Command(), this);
 
         getCommand("skyblockw").setExecutor(new SW());
@@ -163,9 +161,9 @@ public class Main extends JavaPlugin {
 
     public void setLobby(Player p) {
 
-        this.Config.set("Lobby.X", p.getLocation().getBlockX());
-        this.Config.set("Lobby.Y", p.getLocation().getBlockY());
-        this.Config.set("Lobby.Z", p.getLocation().getBlockZ());
+        this.Config.set("Lobby.X", p.getLocation().getX());
+        this.Config.set("Lobby.Y", p.getLocation().getY());
+        this.Config.set("Lobby.Z", p.getLocation().getZ());
         this.Config.set("Lobby.YAW", p.getLocation().getPitch());
         this.Config.set("Lobby.PITCH", p.getLocation().getYaw());
         this.Config.set("Lobby.WORLD", p.getLocation().getWorld().getName());
@@ -174,9 +172,9 @@ public class Main extends JavaPlugin {
 
     public void setWaiting(Player p) {
 
-        this.Config.set("Waiting.X", p.getLocation().getBlockX());
-        this.Config.set("Waiting.Y", p.getLocation().getBlockY());
-        this.Config.set("Waiting.Z", p.getLocation().getBlockZ());
+        this.Config.set("Waiting.X", p.getLocation().getX());
+        this.Config.set("Waiting.Y", p.getLocation().getY());
+        this.Config.set("Waiting.Z", p.getLocation().getZ());
         this.Config.set("Waiting.YAW", p.getLocation().getPitch());
         this.Config.set("Waiting.PITCH", p.getLocation().getYaw());
         this.Config.set("Waiting.WORLD", p.getLocation().getWorld().getName());

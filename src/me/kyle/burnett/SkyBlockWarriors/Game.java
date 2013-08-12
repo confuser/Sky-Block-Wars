@@ -53,6 +53,8 @@ public class Game {
     private boolean deactivate = false;
     private Location min, max;
     private World world;
+    private int amountOfPlayersAtStart;
+
     GameManager gm = GameManager.getInstance();
 
     public Game(int gameID, boolean justCreated, boolean justRestarted) {
@@ -139,6 +141,8 @@ public class Game {
         Bukkit.getServer().getScheduler().cancelTask(Game.this.task);
 
         this.loadChests();
+
+        this.amountOfPlayersAtStart = this.players.size();
 
         this.setState(ArenaState.IN_GAME);
 
@@ -721,9 +725,9 @@ public class Game {
         int amount = Main.getInstance().Spawns.getInt("Spawn." + this.gameID + ".Amount") + 1;
         Main.getInstance().Spawns.set("Spawn." + this.gameID + ".Amount", amount);
 
-        Main.getInstance().Spawns.set("Spawn." + this.gameID + "." + amount + ".X", p.getLocation().getBlockX());
-        Main.getInstance().Spawns.set("Spawn." + this.gameID + "." + amount + ".Y", p.getLocation().getBlockY());
-        Main.getInstance().Spawns.set("Spawn." + this.gameID + "." + amount + ".Z", p.getLocation().getBlockZ());
+        Main.getInstance().Spawns.set("Spawn." + this.gameID + "." + amount + ".X", p.getLocation().getX());
+        Main.getInstance().Spawns.set("Spawn." + this.gameID + "." + amount + ".Y", p.getLocation().getY());
+        Main.getInstance().Spawns.set("Spawn." + this.gameID + "." + amount + ".Z", p.getLocation().getZ());
         Main.getInstance().Spawns.set("Spawn." + this.gameID + "." + amount + ".PITCH", p.getLocation().getPitch());
         Main.getInstance().Spawns.set("Spawn." + this.gameID + "." + amount + ".YAW", p.getLocation().getYaw());
 
@@ -1016,12 +1020,12 @@ public class Game {
 
                 Sign s = (Sign) b.getState();
 
-                if (this.players.size() >= Main.getInstance().Config.getInt("Max-People-In-A-Team") * 4) {
+                if (this.players.size() >= this.getSpawnAmount()) {
 
                     s.setLine(0, "§4§l[Full]");
                 }
 
-                s.setLine(2, this.players.size() + "/" + Main.getInstance().Config.getInt("Max-People-In-A-Team") * 4);
+                s.setLine(2, this.players.size() + "/" + this.amountOfPlayersAtStart);
 
                 s.update(true);
 
@@ -1071,7 +1075,7 @@ public class Game {
 
                 } else if (this.getState().equals(ArenaState.STARTING)) {
 
-                    if (this.players.size() >= Main.getInstance().Config.getInt("Max-People-In-A-Team") * 4) {
+                    if (this.players.size() >= this.getSpawnAmount()) {
 
                         ((Sign) s).setLine(0, "§4§l[Full]");
 
