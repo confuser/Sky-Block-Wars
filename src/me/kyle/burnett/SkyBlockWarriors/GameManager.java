@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 
-import me.kyle.burnett.SkyBlockWarriors.Configs.ConfigManager;
 import me.kyle.burnett.SkyBlockWarriors.Utils.WorldEditUtility;
 
 import org.bukkit.block.Block;

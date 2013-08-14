@@ -23,15 +23,15 @@ public class Interact implements Listener {
 
         GameManager gm = GameManager.getInstance();
 
-        if(gm.isPlayerInGame(e.getPlayer())) {
+        if (gm.isPlayerInGame(e.getPlayer())) {
 
-            if(!gm.getPlayerGame(e.getPlayer()).getState().equals(ArenaState.IN_GAME)){
+            if (!gm.getPlayerGame(e.getPlayer()).getState().equals(ArenaState.IN_GAME)) {
 
                 e.setCancelled(true);
 
             } else {
 
-                if(!gm.getPlayerGame(e.getPlayer()).isBlockInArenaPlace(b.getLocation())){
+                if (!gm.getPlayerGame(e.getPlayer()).isBlockInArenaPlace(b.getLocation())) {
 
                     e.setCancelled(true);
                 }

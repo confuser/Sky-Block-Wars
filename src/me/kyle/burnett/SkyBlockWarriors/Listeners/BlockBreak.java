@@ -3,9 +3,10 @@ package me.kyle.burnett.SkyBlockWarriors.Listeners;
 import java.util.List;
 
 import me.kyle.burnett.SkyBlockWarriors.ArenaState;
+import me.kyle.burnett.SkyBlockWarriors.ConfigManager;
 import me.kyle.burnett.SkyBlockWarriors.GameManager;
 import me.kyle.burnett.SkyBlockWarriors.Main;
-import me.kyle.burnett.SkyBlockWarriors.Configs.ConfigManager;
+
 import org.bukkit.block.Sign;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -29,44 +30,49 @@ public class BlockBreak implements Listener {
             }
         }
 
-        if(gm.isPlayerInGame(e.getPlayer())) {
+        if (gm.isPlayerInGame(e.getPlayer())) {
 
-            if(!gm.getPlayerGame(e.getPlayer()).getState().equals(ArenaState.IN_GAME)){
+            if (!gm.getPlayerGame(e.getPlayer()).getState().equals(ArenaState.IN_GAME)) {
 
                 e.setCancelled(true);
 
             } else {
 
-                if(!gm.getPlayerGame(e.getPlayer()).isBlockInArenaPlace(e.getBlock().getLocation())){
+                if (!gm.getPlayerGame(e.getPlayer()).isBlockInArenaPlace(e.getBlock().getLocation())) {
 
                     e.setCancelled(true);
                 }
             }
         }
 
-/*        if (gm.isPlayerInGame(e.getPlayer())) {
-
-            if(gm.getPlayerGame(e.getPlayer()).getState().equals(ArenaState.IN_GAME)) {
-
-                Block b = e.getBlock();
-
-                BlockLocation bl = Main.getInstance().blockToBlockLocation(b);
-
-                try {
-
-                    if(!RegenArena.getBlocksPlaced(gm.getPlayerGame(e.getPlayer()).getGameID()).contains(bl)){
-
-                        RegenArena.addBlockBroken(b.getWorld().getName(), b.getX(), b.getY(), b.getZ(), b.getTypeId(), b.getData(), gm.getPlayerGame(e.getPlayer()).getGameID());
-
-                    }
-
-                } catch (SQLException | ClassNotFoundException e1) {
-                    e1.printStackTrace();
-                }
-
-            }
-
-        }*/
+        /*
+         * if (gm.isPlayerInGame(e.getPlayer())) {
+         * 
+         * if(gm.getPlayerGame(e.getPlayer()).getState().equals(ArenaState.IN_GAME
+         * )) {
+         * 
+         * Block b = e.getBlock();
+         * 
+         * BlockLocation bl = Main.getInstance().blockToBlockLocation(b);
+         * 
+         * try {
+         * 
+         * if(!RegenArena.getBlocksPlaced(gm.getPlayerGame(e.getPlayer()).
+         * getGameID()).contains(bl)){
+         * 
+         * RegenArena.addBlockBroken(b.getWorld().getName(), b.getX(),
+         * b.getY(), b.getZ(), b.getTypeId(), b.getData(),
+         * gm.getPlayerGame(e.getPlayer()).getGameID());
+         * 
+         * }
+         * 
+         * } catch (SQLException | ClassNotFoundException e1) {
+         * e1.printStackTrace(); }
+         * 
+         * }
+         * 
+         * }
+         */
 
         if (e.getBlock().getState() instanceof Sign) {
 

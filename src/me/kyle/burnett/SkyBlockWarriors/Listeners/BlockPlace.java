@@ -25,42 +25,46 @@ public class BlockPlace implements Listener {
             }
         }
 
-        if(gm.isPlayerInGame(e.getPlayer())) {
+        if (gm.isPlayerInGame(e.getPlayer())) {
 
-            if(!gm.getPlayerGame(e.getPlayer()).getState().equals(ArenaState.IN_GAME)){
+            if (!gm.getPlayerGame(e.getPlayer()).getState().equals(ArenaState.IN_GAME)) {
 
                 e.setCancelled(true);
 
             } else {
 
-                if(!gm.getPlayerGame(e.getPlayer()).isBlockInArenaPlace(e.getBlock().getLocation())){
+                if (!gm.getPlayerGame(e.getPlayer()).isBlockInArenaPlace(e.getBlock().getLocation())) {
 
                     e.setCancelled(true);
                 }
             }
         }
 
-/*        else if (gm.isPlayerInGame(e.getPlayer())) {
-
-            if(gm.getPlayerGame(e.getPlayer()).getState().equals(ArenaState.IN_GAME)) {
-
-                Block b = e.getBlock();
-
-                BlockLocation bl = Main.getInstance().blockToBlockLocation(b);
-
-                try {
-
-                    if(!RegenArena.getBlocksBroken(gm.getPlayerGame(e.getPlayer()).getGameID()).contains(bl)){
-
-                        RegenArena.addBlockPlaced(b.getWorld().getName(), b.getX(), b.getY(), b.getZ(), b.getTypeId(), b.getData(), gm.getPlayerGame(e.getPlayer()).getGameID());
-                    }
-
-                } catch (SQLException | ClassNotFoundException e1) {
-                    e1.printStackTrace();
-                }
-
-            }
-
-        }*/
+        /*
+         * else if (gm.isPlayerInGame(e.getPlayer())) {
+         * 
+         * if(gm.getPlayerGame(e.getPlayer()).getState().equals(ArenaState.IN_GAME
+         * )) {
+         * 
+         * Block b = e.getBlock();
+         * 
+         * BlockLocation bl = Main.getInstance().blockToBlockLocation(b);
+         * 
+         * try {
+         * 
+         * if(!RegenArena.getBlocksBroken(gm.getPlayerGame(e.getPlayer()).
+         * getGameID()).contains(bl)){
+         * 
+         * RegenArena.addBlockPlaced(b.getWorld().getName(), b.getX(),
+         * b.getY(), b.getZ(), b.getTypeId(), b.getData(),
+         * gm.getPlayerGame(e.getPlayer()).getGameID()); }
+         * 
+         * } catch (SQLException | ClassNotFoundException e1) {
+         * e1.printStackTrace(); }
+         * 
+         * }
+         * 
+         * }
+         */
     }
 }

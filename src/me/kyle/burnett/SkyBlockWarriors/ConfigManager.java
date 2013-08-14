@@ -1,12 +1,10 @@
-package me.kyle.burnett.SkyBlockWarriors.Configs;
+package me.kyle.burnett.SkyBlockWarriors;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
-import me.kyle.burnett.SkyBlockWarriors.Main;
 
 public class ConfigManager {
 
@@ -48,6 +46,10 @@ public class ConfigManager {
             copy(Main.getInstance().getResource("signs.yml"), Main.getInstance().signFile);
         }
 
+        if (!Main.getInstance().cchestFile.exists()) {
+            Main.getInstance().cchestFile.getParentFile().mkdirs();
+            copy(Main.getInstance().getResource("cchests.yml"), Main.getInstance().cchestFile);
+        }
 
     }
 
@@ -74,6 +76,7 @@ public class ConfigManager {
             Main.getInstance().Chest.load(Main.getInstance().chestFile);
             Main.getInstance().Spawns.load(Main.getInstance().spawnFile);
             Main.getInstance().Signs.load(Main.getInstance().signFile);
+            Main.getInstance().CChests.load(Main.getInstance().cchestFile);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -88,6 +91,7 @@ public class ConfigManager {
             Main.getInstance().Chest.save(Main.getInstance().chestFile);
             Main.getInstance().Spawns.save(Main.getInstance().spawnFile);
             Main.getInstance().Signs.save(Main.getInstance().signFile);
+            Main.getInstance().CChests.save(Main.getInstance().cchestFile);
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -1,13 +1,7 @@
-package me.kyle.burnett.SkyBlockWarriors.Commands;
+package me.kyle.burnett.SkyBlockWarriors;
 
 import java.sql.SQLException;
 
-import me.kyle.burnett.SkyBlockWarriors.ArenaState;
-import me.kyle.burnett.SkyBlockWarriors.ChestType;
-import me.kyle.burnett.SkyBlockWarriors.Game;
-import me.kyle.burnett.SkyBlockWarriors.GameManager;
-import me.kyle.burnett.SkyBlockWarriors.Main;
-import me.kyle.burnett.SkyBlockWarriors.Configs.ConfigManager;
 import me.kyle.burnett.SkyBlockWarriors.DatabaseHandler.Queries.Leaderboard;
 import me.kyle.burnett.SkyBlockWarriors.DatabaseHandler.Queries.PlayerSearch;
 import me.kyle.burnett.SkyBlockWarriors.Utils.WorldEditUtility;
@@ -31,11 +25,12 @@ public class SW implements CommandExecutor {
             Player p = (Player) sender;
 
             GameManager gm = GameManager.getInstance();
+            ChestHandler chestH = ChestHandler.getInstance();
+
 
             String prefix = ChatColor.GOLD + "[" + ChatColor.BLUE + "SBW" + ChatColor.GOLD + "] ";
             String noperms = ChatColor.RED + "You do not have permission to do this.";
             String perm = prefix + noperms;
-            String teams = ChatColor.RED + "red/" + ChatColor.BLUE + "blue/" + ChatColor.YELLOW + "yellow/" + ChatColor.DARK_GREEN + "green/" + ChatColor.GRAY + "spectator";
 
             if (p.hasPermission("skyblockwars.user")) {
 
@@ -47,7 +42,7 @@ public class SW implements CommandExecutor {
                     p.sendMessage(ChatColor.BLUE + "Author: " + ChatColor.GOLD + "Burnett");
                     p.sendMessage(ChatColor.BLUE + "Contributor: " + ChatColor.GOLD + "Kane, kbunkrams");
                     p.sendMessage(ChatColor.BLUE + "Version: " + ChatColor.GOLD + pdf.getVersion());
-                    p.sendMessage(ChatColor.BLUE + "/sw help - " + ChatColor.GOLD + "Show's the default user command help.");
+                    p.sendMessage(ChatColor.BLUE + "/sw help - " + ChatColor.GOLD + "Show's the user command help.");
                     p.sendMessage(ChatColor.BLUE + "/sw help builder - " + ChatColor.GOLD + "Show's the builder command help.");
                     p.sendMessage(ChatColor.BLUE + "/sw help admin -  " + ChatColor.GOLD + "Show's the admin command help.");
 
@@ -189,23 +184,18 @@ public class SW implements CommandExecutor {
 
                             if (Main.getInstance().doesLobbyExist()) {
 
-                                if (Main.getInstance().doesWaitingExist()) {
+                                if (WorldEditUtility.getInstance().doesSelectionExist(p)) {
 
-                                    if (WorldEditUtility.getInstance().doesSelectionExist(p)) {
+                                    int arena = gm.createGame(p);
+                                    p.sendMessage(prefix + ChatColor.GREEN + "Arena " + ChatColor.GOLD + arena + ChatColor.GREEN + " created. Once you have edited it use '" + ChatColor.GOLD + "/sw activate arena" + ChatColor.GREEN + "' to allow people to join.");
 
-                                        int arena = gm.createGame(p);
-                                        p.sendMessage(prefix + ChatColor.GREEN + "Arena " + ChatColor.GOLD + arena + ChatColor.GREEN + " created. Once you have edited it use '" + ChatColor.GOLD + "/sw activate arena" + ChatColor.GREEN + "' to allow people to join.");
+                                } else if (!WorldEditUtility.getInstance().doesSelectionExist(p)) {
 
-                                    } else if (!WorldEditUtility.getInstance().doesSelectionExist(p)) {
-
-                                        p.sendMessage(prefix + ChatColor.RED + "Please make a selection of the arena first.");
-                                    }
-
-                                } else if (!Main.getInstance().doesWaitingExist()) {
-                                    p.sendMessage(prefix + ChatColor.RED + "You need to set a waiting area first.");
+                                    p.sendMessage(prefix + ChatColor.RED + "Please make a selection of the arena first.");
                                 }
 
                             } else if (!Main.getInstance().doesLobbyExist()) {
+
                                 p.sendMessage(prefix + ChatColor.RED + "You need to set a lobby first.");
                             }
 
@@ -369,20 +359,7 @@ public class SW implements CommandExecutor {
                         return true;
                     }
 
-                    else if (args[0].equalsIgnoreCase("setwaiting")) {
-
-                        if (p.hasPermission("skyblockwars.setwaiting")) {
-
-                            Main.getInstance().setWaiting(p);
-                            p.sendMessage(prefix + ChatColor.GREEN + "Waiting room set succesfully.");
-
-                        } else if (!p.hasPermission("skyblockwars.setwaiting")) {
-
-                            p.sendMessage(perm);
-                        }
-                        return true;
-
-                    } else if (args[0].equalsIgnoreCase("leaderboard") || args[0].equalsIgnoreCase("leader")) {
+                    else if (args[0].equalsIgnoreCase("leaderboard") || args[0].equalsIgnoreCase("leader")) {
 
                         if (p.hasPermission("skyblockwars.leader")) {
 
@@ -468,13 +445,13 @@ public class SW implements CommandExecutor {
                         return true;
                     }
 
-                    else if (args[0].equalsIgnoreCase("reloadarenas")){
+                    else if (args[0].equalsIgnoreCase("reloadarenas")) {
 
-                        if(p.hasPermission("skyblockwars.reloadarenas")){
+                        if (p.hasPermission("skyblockwars.reloadarenas")) {
 
-                            for(Game g : gm.getGames()){
+                            for (Game g : gm.getGames()) {
 
-                                if(g.getState().equals(ArenaState.IN_GAME) || g.getState().equals(ArenaState.STARTING)){
+                                if (g.getState().equals(ArenaState.IN_GAME) || g.getState().equals(ArenaState.STARTING)) {
 
                                     g.endGame();
                                 }
@@ -482,24 +459,23 @@ public class SW implements CommandExecutor {
 
                             p.sendMessage(prefix + ChatColor.GREEN + "All arenas have been reloaded.");
 
-                        }else {
+                        } else {
 
                             p.sendMessage(perm);
                         }
 
                         return true;
-                    }
-                    else if (args[0].equalsIgnoreCase("addspawn")) {
+                    } else if (args[0].equalsIgnoreCase("addspawn")) {
 
                         if (p.hasPermission("skyblockwars.addspawn")) {
 
                             if (gm.isEditing(p)) {
 
-                                  Game g = gm.getGameEditing(p);
+                                Game g = gm.getGameEditing(p);
 
-                                  g.addSpawn(p);
+                                g.addSpawn(p);
 
-                                  p.sendMessage(prefix + ChatColor.GREEN + "Spawn " + ChatColor.GOLD + args[1] + " has been added.");
+                                p.sendMessage(prefix + ChatColor.GREEN + "Spawn " + ChatColor.GOLD + g.getSpawnAmount() + ChatColor.GREEN +  " has been added.");
 
                             } else if (!gm.isEditing(p)) {
 
@@ -562,36 +538,97 @@ public class SW implements CommandExecutor {
                         return true;
                     }
 
+                    else if (args[0].equalsIgnoreCase("setwaiting")) {
+
+                        if (p.hasPermission("skyblockwars.setwaiting")) {
+
+                            if (gm.checkGameByConfig(Integer.parseInt(args[1]))) {
+
+                                Main.getInstance().setWaiting(p, Integer.parseInt(args[1]));
+
+                                p.sendMessage(prefix + ChatColor.GREEN + "Waiting room set succesfully.");
+
+                            } else if (gm.checkGameByConfig(Integer.parseInt(args[1]))) {
+
+                                p.sendMessage(prefix + ChatColor.RED + "That arena does not exist.");
+                            }
+
+                        } else if (!p.hasPermission("skyblockwars.setwaiting")) {
+
+                            p.sendMessage(perm);
+                        }
+                        return true;
+
+                    }
+
+                    else if (args[0].equalsIgnoreCase("addchesttype")) {
+
+                        if (p.hasPermission("skyblockwars.addchesttype")) {
+
+                            if (!chestH.doesCChestExist(args[1])) {
+
+                                chestH.addCustomChest(args[1]);
+
+                                p.sendMessage(prefix + ChatColor.GREEN + "You have added '" + ChatColor.GOLD + args[1] + ChatColor.GREEN + "' as a new chest type. Add items via the custom chest type file.");
+
+                            } else if (!chestH.doesCChestExist(args[1])) {
+                                p.sendMessage(prefix + ChatColor.RED + "That chest type already exists.");
+                            }
+
+                        } else if (p.hasPermission("skyblockwars.addchesttpye")) {
+
+                            p.sendMessage(perm);
+                        }
+
+                        return true;
+                    }
+
+                    else if (args[0].equalsIgnoreCase("removechesttype")) {
+
+                        if (p.hasPermission("skyblockwars.addchesttype")) {
+
+                            if (chestH.doesCChestExist(args[1])) {
+
+                                chestH.removeCustomChest(args[1]);
+
+                                p.sendMessage(prefix + ChatColor.GREEN + "You have removed '" + ChatColor.GOLD + args[1] + ChatColor.GREEN + "' as a new chest type.");
+
+                            } else if (chestH.doesCChestExist(args[1])) {
+                                p.sendMessage(prefix + ChatColor.RED + "That chest type does not exist.");
+                            }
+
+                        } else if (p.hasPermission("skyblockwars.addchesttype")) {
+
+                            p.sendMessage(perm);
+                        }
+
+                        return true;
+                    }
+
                     else if (args[0].equalsIgnoreCase("create")) {
 
                         if (p.hasPermission("skyblockwars.create.override")) {
 
                             if (Main.getInstance().doesLobbyExist()) {
 
-                                if (Main.getInstance().doesWaitingExist()) {
+                                if (gm.isInteger(args[1])) {
 
-                                    if (gm.isInteger(args[1])) {
+                                    int id = Integer.parseInt(args[1]);
 
-                                        int id = Integer.parseInt(args[1]);
+                                    if (!(id > gm.getArenaAmount())) {
 
-                                        if (!(id > gm.getArenaAmount())) {
+                                        p.sendMessage(prefix + ChatColor.RED + "You are away to override a previous arena with a new selection. This will overwrite all the arena's previous data but keep the same id. Do '/sw confirm' to confirm this action.");
 
-                                            p.sendMessage(prefix + ChatColor.RED + "You are away to override a previous arena with a new selection. This will overwrite all the arena's previous data but keep the same id. Do '/sw confirm' to confirm this action.");
+                                        gm.getConfirming().put(p.getName(), id);
 
-                                            gm.getConfirming().put(p.getName(), id);
+                                    } else if (id > gm.getArenaAmount()) {
 
-                                        } else if (id > gm.getArenaAmount()) {
-
-                                            p.sendMessage(prefix + ChatColor.RED + "That number is bigger than your amount of arenas. Use '/sw create' to add arenas.");
-                                        }
+                                        p.sendMessage(prefix + ChatColor.RED + "That number is bigger than your amount of arenas. Use '/sw create' to add arenas.");
                                     }
-
-                                } else if (!Main.getInstance().doesWaitingExist()) {
-
-                                    p.sendMessage(prefix + ChatColor.RED + "You need to set a waiting area first.");
                                 }
 
                             } else if (!Main.getInstance().doesLobbyExist()) {
+
                                 p.sendMessage(prefix + ChatColor.RED + "You need to set a lobby first.");
                             }
 
@@ -739,24 +776,15 @@ public class SW implements CommandExecutor {
                                                 return true;
                                             }
 
-                                            if (args[1].equalsIgnoreCase("side")) {
+                                            if (chestH.doesCChestExist(args[1])) {
 
-                                                gm.getGameEditing(p).addChest(ChestType.SIDE, loc);
+                                                gm.getGameEditing(p).addChest(args[1], loc);
 
-                                                p.sendMessage(prefix + ChatColor.GREEN + "You have added a " + ChatColor.GOLD + "side " + ChatColor.GREEN + "chest to arena " + ChatColor.GOLD + gm.getPlayerEditing(p) + ChatColor.GREEN + ".");
+                                                p.sendMessage(prefix + ChatColor.GREEN + "You have added a " + ChatColor.GOLD + args[1] + ChatColor.GREEN + " chest to arena " + ChatColor.GOLD + gm.getPlayerEditing(p) + ChatColor.GREEN + ".");
 
-                                            } else if (args[1].equalsIgnoreCase("center")) {
+                                            } else if (!chestH.doesCChestExist(args[1])) {
 
-                                                gm.getGameEditing(p).addChest(ChestType.CENTER, loc);
-
-                                                p.sendMessage(prefix + ChatColor.GREEN + "You have added a " + ChatColor.GOLD + "center " + ChatColor.GREEN + "chest to arena " + ChatColor.GOLD + gm.getPlayerEditing(p) + ChatColor.GREEN + ".");
-
-                                            } else if (args[1].equalsIgnoreCase("spawn")) {
-
-                                                gm.getGameEditing(p).addChest(ChestType.SPAWN, loc);
-
-                                                p.sendMessage(prefix + ChatColor.GREEN + "You have added a " + ChatColor.GOLD + "spawn " + ChatColor.GREEN + "chest to arena " + ChatColor.GOLD + gm.getPlayerEditing(p) + ChatColor.GREEN + ".");
-
+                                                p.sendMessage(prefix + ChatColor.RED + "That chest type does not exist.");
                                             }
 
                                         } else if (WorldEditUtility.getInstance().isChestAlreadyAdded(p)) {

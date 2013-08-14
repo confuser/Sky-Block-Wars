@@ -6,11 +6,7 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import me.kyle.burnett.SkyBlockWarriors.Commands.SW;
-import me.kyle.burnett.SkyBlockWarriors.Configs.ConfigManager;
 import me.kyle.burnett.SkyBlockWarriors.DatabaseHandler.SQLSelection;
-import me.kyle.burnett.SkyBlockWarriors.DatabaseHandler.Queries.Regen.BlockLocation;
-import me.kyle.burnett.SkyBlockWarriors.DatabaseHandler.Queries.Regen.RegenArena;
 import me.kyle.burnett.SkyBlockWarriors.Listeners.BlockBreak;
 import me.kyle.burnett.SkyBlockWarriors.Listeners.BlockPlace;
 import me.kyle.burnett.SkyBlockWarriors.Listeners.Command;
@@ -24,7 +20,6 @@ import me.kyle.burnett.SkyBlockWarriors.Listeners.SignChange;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.block.Block;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -54,6 +49,9 @@ public class Main extends JavaPlugin {
     public File signFile;
     public FileConfiguration Signs;
 
+    public File cchestFile;
+    public FileConfiguration CChests;
+
     public boolean debug = false;
 
     public Logger log = Bukkit.getLogger();
@@ -75,6 +73,7 @@ public class Main extends JavaPlugin {
         chestFile = new File(getDataFolder(), "chests.yml");
         spawnFile = new File(getDataFolder(), "spawns.yml");
         signFile = new File(getDataFolder(), "signs.yml");
+        cchestFile = new File(getDataFolder(), "custom-chests.yml");
 
         try {
 
@@ -91,6 +90,7 @@ public class Main extends JavaPlugin {
         this.Chest = new YamlConfiguration();
         this.Spawns = new YamlConfiguration();
         this.Signs = new YamlConfiguration();
+        this.CChests = new YamlConfiguration();
         ConfigManager.getInstance().loadYamls();
         ConfigManager.getInstance().saveYamls();
 
@@ -108,12 +108,6 @@ public class Main extends JavaPlugin {
 
         if (Config.getBoolean("Debug-Mode")) {
             debug = true;
-        }
-
-        try {
-            RegenArena.checkTable();
-        } catch (SQLException | ClassNotFoundException e1) {
-            e1.printStackTrace();
         }
 
         setUp();
@@ -136,7 +130,7 @@ public class Main extends JavaPlugin {
     @Override
     public void onDisable() {
 
-        for (Game g : GameManager.getInstance().getGames()){
+        for (Game g : GameManager.getInstance().getGames()) {
             g.endGameShutdown();
         }
 
@@ -170,29 +164,20 @@ public class Main extends JavaPlugin {
         ConfigManager.getInstance().saveYamls();
     }
 
-    public void setWaiting(Player p) {
+    public void setWaiting(Player p, int arena) {
 
-        this.Config.set("Waiting.X", p.getLocation().getX());
-        this.Config.set("Waiting.Y", p.getLocation().getY());
-        this.Config.set("Waiting.Z", p.getLocation().getZ());
-        this.Config.set("Waiting.YAW", p.getLocation().getPitch());
-        this.Config.set("Waiting.PITCH", p.getLocation().getYaw());
-        this.Config.set("Waiting.WORLD", p.getLocation().getWorld().getName());
+        this.Arena.set("Arena." + arena + ".Spawn.X", p.getLocation().getX());
+        this.Arena.set("Arena." + arena + ".Spawn.Y", p.getLocation().getY());
+        this.Arena.set("Arena." + arena + ".Spawn.Z", p.getLocation().getZ());
+        this.Arena.set("Arena." + arena + ".Spawn.PITCH", p.getLocation().getPitch());
+        this.Arena.set("Arena." + arena + ".Spawn.YAW", p.getLocation().getYaw());
+        this.Arena.set("Arena." + arena + ".Spawn.WORLD", p.getLocation().getWorld().getName());
         ConfigManager.getInstance().saveYamls();
     }
 
     public boolean doesLobbyExist() {
 
         if (this.Config.contains("Lobby")) {
-            return true;
-        }
-
-        return false;
-    }
-
-    public boolean doesWaitingExist() {
-
-        if (this.Config.contains("Waiting")) {
             return true;
         }
 
@@ -219,24 +204,29 @@ public class Main extends JavaPlugin {
         return true;
     }
 
-    public boolean teleportToWaiting(Player p) {
+    public boolean teleportToWaiting(Player p, int arena) {
 
-        if (!this.Config.contains("Waiting")) {
-            return false;
-        }
-
-        World world = Bukkit.getServer().getWorld(this.Config.getString("Waiting.WORLD"));
-        double x = Main.getInstance().Config.getDouble("Waiting.X");
-        double y = Main.getInstance().Config.getDouble("Waiting.Y");
-        double z = Main.getInstance().Config.getDouble("Waiting.Z");
-        long yaw = Main.getInstance().Config.getLong("Waiting.YAW");
-        long pitch = Main.getInstance().Config.getLong("Waiting.PITCH");
+        double x = this.Arena.getDouble("Arena." + arena + ".Spawn.X");
+        double y = this.Arena.getDouble("Arena." + arena + ".Spawn.Y");
+        double z = this.Arena.getDouble("Arena." + arena + ".Spawn.Z");
+        long pitch = this.Arena.getLong("Arena." + arena + ".Spawn.PITCH");
+        long yaw = this.Arena.getLong("Arena." + arena + ".Spawn.YAW");
+        World world = Bukkit.getServer().getWorld(this.Arena.getString("Arena." + arena + ".Spawn.WORLD"));
 
         Location location = new Location(world, x, y, z, yaw, pitch);
 
         p.teleport(location);
 
         return true;
+    }
+
+    public boolean doesWaitingExist(int arena) {
+
+        if (this.Arena.contains("Arena." + arena + ".Spawn")) {
+            return true;
+        }
+
+        return false;
     }
 
     public void checkDatabase() throws SQLException, ClassNotFoundException {
@@ -247,10 +237,6 @@ public class Main extends JavaPlugin {
 
         con.createStatement().execute("CREATE TABLE IF NOT EXISTS sbw(username VARCHAR(255), kills INTEGER, deaths INTEGER, wins INTEGER, losses INTEGER, played INTEGER)");
 
-    }
-
-    public BlockLocation blockToBlockLocation(Block b){
-        return new BlockLocation(b.getWorld().getName(), b.getX(), b.getY(), b.getZ(), b.getTypeId(), b.getData());
     }
 
 }

@@ -21,9 +21,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
+import me.kyle.burnett.SkyBlockWarriors.ConfigManager;
 import me.kyle.burnett.SkyBlockWarriors.GameManager;
 import me.kyle.burnett.SkyBlockWarriors.Main;
-import me.kyle.burnett.SkyBlockWarriors.Configs.ConfigManager;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -77,7 +77,6 @@ public class WorldEditUtility {
             System.out.println("Null Schematic.");
             return false;
         }
-
 
 
         CuboidClipboard cc = null;

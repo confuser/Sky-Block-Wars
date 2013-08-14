@@ -3,8 +3,6 @@ package me.kyle.burnett.SkyBlockWarriors;
 import java.util.Arrays;
 import java.util.List;
 
-import me.kyle.burnett.SkyBlockWarriors.Configs.ConfigManager;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -58,7 +56,7 @@ public class InvManager {
         p.getInventory().setContents(main.toArray(new ItemStack[36]));
         p.getInventory().setArmorContents(armor.toArray(new ItemStack[4]));
 
-        //Main.getInstance().Inv.set(p.getName(),  null);
+        Main.getInstance().Inv.set(p.getName(), null);
         ConfigManager.getInstance().saveYamls();
     }
 }

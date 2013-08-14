@@ -2,10 +2,10 @@ package me.kyle.burnett.SkyBlockWarriors.Listeners;
 
 import java.util.List;
 
+import me.kyle.burnett.SkyBlockWarriors.ConfigManager;
 import me.kyle.burnett.SkyBlockWarriors.Game;
 import me.kyle.burnett.SkyBlockWarriors.GameManager;
 import me.kyle.burnett.SkyBlockWarriors.Main;
-import me.kyle.burnett.SkyBlockWarriors.Configs.ConfigManager;
 
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
