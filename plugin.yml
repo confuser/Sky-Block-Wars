@@ -28,6 +28,7 @@ permissions:
             skyblockwars.endgame: true
             skyblockwars.updatesigns: true
             skyblockwars.reloadarenas: true
+            skyblockwars.addchesttype: true
         default: op
     skyblockwars.builder:
         children:
@@ -122,4 +123,6 @@ permissions:
     skyblockwars.updatesigns:
         default: op
     skyblockwars.reloadarenas:
+        default: op
+    skyblockwars.addchesttype:
         default: op

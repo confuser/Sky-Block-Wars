@@ -40,7 +40,7 @@ public class SW implements CommandExecutor {
 
                     p.sendMessage(ChatColor.GOLD + "----------" + ChatColor.GREEN + "Sky Block War's" + ChatColor.GOLD + "----------");
                     p.sendMessage(ChatColor.BLUE + "Author: " + ChatColor.GOLD + "Burnett");
-                    p.sendMessage(ChatColor.BLUE + "Contributor: " + ChatColor.GOLD + "Kane, kbunkrams");
+                    p.sendMessage(ChatColor.BLUE + "Contributor: " + ChatColor.GOLD + "kbunkrams");
                     p.sendMessage(ChatColor.BLUE + "Version: " + ChatColor.GOLD + pdf.getVersion());
                     p.sendMessage(ChatColor.BLUE + "/sw help - " + ChatColor.GOLD + "Show's the user command help.");
                     p.sendMessage(ChatColor.BLUE + "/sw help builder - " + ChatColor.GOLD + "Show's the builder command help.");
@@ -929,7 +929,6 @@ public class SW implements CommandExecutor {
 
                                         gm.setDeactivated(Integer.parseInt(args[1]));
                                         gm.getGameByID(Integer.parseInt(args[1])).endGameDeactivate(true);
-                                        ;
 
                                         p.sendMessage(prefix + ChatColor.GREEN + "Arena " + ChatColor.GOLD + args[1] + ChatColor.GREEN + " has been deactivated.");
 
@@ -1159,9 +1158,9 @@ public class SW implements CommandExecutor {
                                 p.sendMessage(ChatColor.GOLD + "/sw create [arena] - " + ChatColor.BLUE + "Create's a new arena or overrides a previous arena if specified.");
                                 p.sendMessage(ChatColor.GOLD + "/sw confirm - " + ChatColor.BLUE + "Confirm an override action.");
                                 p.sendMessage(ChatColor.GOLD + "/sw edit <arena> - " + ChatColor.BLUE + "Enter edit mode of an arena");
-                                p.sendMessage(ChatColor.GOLD + "/sw setspawn - " + ChatColor.BLUE + "Set the spawns for each team.");
+                                p.sendMessage(ChatColor.GOLD + "/sw addspawn - " + ChatColor.BLUE + "Set the spawns for each team.");
                                 p.sendMessage(ChatColor.GOLD + "/sw removespawn <spawn>" + " - " + ChatColor.BLUE + "Remove the spawn for a team.");
-                                p.sendMessage(ChatColor.GOLD + "/sw addchest <spawn/side/center> - " + ChatColor.BLUE + "Add the location and type of the arena chests.");
+                                p.sendMessage(ChatColor.GOLD + "/sw addchest <type> - " + ChatColor.BLUE + "Add the location and type of the arena chests.");
                                 p.sendMessage(ChatColor.GOLD + "/sw removechest - " + ChatColor.BLUE + "Removes the current chest of your selection.");
 
                             } else if (!p.hasPermission("skyblockwars.help.builder")) {
@@ -1177,6 +1176,8 @@ public class SW implements CommandExecutor {
                                 p.sendMessage(ChatColor.GOLD + "----------" + ChatColor.GREEN + "Sky Block War's Admin Help" + ChatColor.GOLD + "----------");
                                 p.sendMessage(ChatColor.GOLD + "/sw setlobby - " + ChatColor.BLUE + "Set the lobby where player's get teleported to.");
                                 p.sendMessage(ChatColor.GOLD + "/sw setwaiting <arena> - " + ChatColor.BLUE + "Set the waiting lobby where player's get teleported to after they join.");
+                                p.sendMessage(ChatColor.GOLD + "/sw addchesttype <name> - " + ChatColor.BLUE + "Add a custom chest type. Edit items in custom-chests.yml");
+                                p.sendMessage(ChatColor.GOLD + "/sw removechesttype <name> - " + ChatColor.BLUE + "Remove a custom chest type.");
                                 p.sendMessage(ChatColor.GOLD + "/sw prepare <arena> - " + ChatColor.BLUE + "Completely restart the arena disregarding what state its in.");
                                 p.sendMessage(ChatColor.GOLD + "/sw enable <arena> - " + ChatColor.BLUE + "Enable an arena for editing.");
                                 p.sendMessage(ChatColor.GOLD + "/sw disable <arena> - " + ChatColor.BLUE + "Disable an arena. Will not show up in '/sw listgames'.");
