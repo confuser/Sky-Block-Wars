@@ -174,7 +174,7 @@ public class Game {
 
         this.removeFromGameEnd(p);
 
-        this.broadCastServer(prefix + ChatColor.GREEN + "Player " + p.getDisplayName() + " has one Sky-Block Wars in arena " + ChatColor.GOLD + this.gameID + ChatColor.GREEN + ".");
+        this.broadCastServer(prefix + ChatColor.GREEN + "Player " + p.getDisplayName() + ChatColor.GREEN +  " has won Sky-Block Wars in arena " + ChatColor.GOLD + this.gameID + ChatColor.GREEN + ".");
 
         if (!spectators.isEmpty()) {
 
