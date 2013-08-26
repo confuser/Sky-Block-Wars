@@ -503,6 +503,9 @@ public class SW implements CommandExecutor {
                         if (p.hasPermission("skyblockwars.setspawn")) {
 
                             if (gm.isEditing(p)) {
+                            	
+                            	if (!gm.isInteger(args[1]))
+                            		return false;
 
                                 if (gm.getGameEditing(p).isSpawn(Integer.parseInt(args[1]))) {
 
@@ -541,6 +544,9 @@ public class SW implements CommandExecutor {
                     else if (args[0].equalsIgnoreCase("setwaiting")) {
 
                         if (p.hasPermission("skyblockwars.setwaiting")) {
+
+                        	if (!gm.isInteger(args[1]))
+                        		return false;
 
                             if (gm.checkGameByConfig(Integer.parseInt(args[1]))) {
 
@@ -643,6 +649,9 @@ public class SW implements CommandExecutor {
                     else if (args[0].equalsIgnoreCase("join")) {
 
                         if (p.hasPermission("skyblockwars.join." + args[1]) || p.hasPermission("skyblockwars.join")) {
+                        	
+                        	if (!gm.isInteger(args[1]))
+                        		return false;
 
                             if (gm.checkGameByID(Integer.parseInt(args[1]))) {
 
@@ -701,6 +710,9 @@ public class SW implements CommandExecutor {
                     else if (args[0].equalsIgnoreCase("spectate")) {
 
                         if (p.hasPermission("skyblockwars.spectate")) {
+                        	
+                        	if (!gm.isInteger(args[1]))
+                        		return false;
 
                             if (gm.checkGameByID(Integer.parseInt(args[1]))) {
 
@@ -725,6 +737,9 @@ public class SW implements CommandExecutor {
                     else if (args[0].equalsIgnoreCase("edit")) {
 
                         if (p.hasPermission("skyblockwars.edit")) {
+                        	
+                        	if (!gm.isInteger(args[1]))
+                        		return false;
 
                             if (!gm.isEditing(p)) {
 
@@ -818,6 +833,9 @@ public class SW implements CommandExecutor {
                     else if (args[0].equalsIgnoreCase("enable")) {
 
                         if (p.hasPermission("skyblockwars.enable")) {
+                        	
+                        	if (!gm.isInteger(args[1]))
+                        		return false;
 
                             if (gm.checkGameByConfig(Integer.parseInt(args[1]))) {
 
@@ -848,6 +866,9 @@ public class SW implements CommandExecutor {
                     else if (args[0].equalsIgnoreCase("disable")) {
 
                         if (p.hasPermission("skyblockwars.disable")) {
+                        	
+                        	if (!gm.isInteger(args[1]))
+                        		return false;
 
                             if (gm.checkGameByID(Integer.parseInt(args[1]))) {
 
@@ -897,6 +918,9 @@ public class SW implements CommandExecutor {
                     else if (args[0].equalsIgnoreCase("activate")) {
 
                         if (p.hasPermission("skyblockwars.activate")) {
+                        	
+                        	if (!gm.isInteger(args[1]))
+                        		return false;
 
                             if (gm.checkGameByID(Integer.parseInt(args[1]))) {
 
@@ -920,6 +944,9 @@ public class SW implements CommandExecutor {
                     if (args[0].equalsIgnoreCase("deactivate")) {
 
                         if (p.hasPermission("skyblockwars.deactivate")) {
+                        	
+                        	if (!gm.isInteger(args[1]))
+                        		return false;
 
                             if (gm.checkGameByID(Integer.parseInt(args[1]))) {
 
@@ -960,6 +987,9 @@ public class SW implements CommandExecutor {
                     else if (args[0].equalsIgnoreCase("endgame")) {
 
                         if (p.hasPermission("skyblockwars.endgame")) {
+                        	
+                        	if (!gm.isInteger(args[1]))
+                        		return false;
 
                             if (gm.checkGameByID(Integer.parseInt(args[1]))) {
 
@@ -989,6 +1019,9 @@ public class SW implements CommandExecutor {
                     else if (args[0].equalsIgnoreCase("save")) {
 
                         if (p.hasPermission("skyblockwars.save")) {
+                        	
+                        	if (!gm.isInteger(args[1]))
+                        		return false;
 
                             if (gm.checkGameByID(Integer.parseInt(args[1]))) {
 
@@ -1013,6 +1046,9 @@ public class SW implements CommandExecutor {
                     else if (args[0].equalsIgnoreCase("load")) {
 
                         if (p.hasPermission("skyblockwars.load")) {
+                        	
+                        	if (!gm.isInteger(args[1]))
+                        		return false;
 
                             if (gm.checkGameByID(Integer.parseInt(args[1]))) {
 
@@ -1041,6 +1077,9 @@ public class SW implements CommandExecutor {
                     else if (args[0].equalsIgnoreCase("prepare")) {
 
                         if (p.hasPermission("skyblockwars.prepare")) {
+                        	
+                        	if (!gm.isInteger(args[1]))
+                        		return false;
 
                             if (gm.checkGameByID(Integer.parseInt(args[1]))) {
 
@@ -1124,6 +1163,9 @@ public class SW implements CommandExecutor {
                     else if (args[0].equalsIgnoreCase("info")) {
 
                         if (p.hasPermission("skyblockwars.info")) {
+                        	
+                        	if (!gm.isInteger(args[1]))
+                        		return false;
 
                             if (gm.checkGameByID(Integer.parseInt(args[1]))) {
 
